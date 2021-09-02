@@ -17,7 +17,6 @@ typedef uint16_t u16;
 typedef int8_t i8;
 typedef uint8_t u8;
 
-#define PI32 3.14159265359f
 #define ARR_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
 #define MAX_PATH_SIZE 512
 

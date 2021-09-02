@@ -4,6 +4,7 @@
 #define _GAME_H
 
 #include "common.h"
+#include "math_util.h"
 #include "memory.h"
 #include "renderer.h"
 #include "platform.h"

@@ -1,10 +1,11 @@
 # config.mk
 
 USE_X11?=0
+NO_SSE?=0
 
 CC=gcc
 
-LIBS=-lm -lGLEW
+LIBS=-lGLEW
 
 PROG=game
 

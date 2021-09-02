@@ -1,9 +1,8 @@
 // platform_glfw.c
-// Use glfw as a platform 'backend'
+// Use glfw as a platform layer 'backend'
 
 #include <GL/glew.h>
 #include <GL/gl.h>
-
 #include <GLFW/glfw3.h>
 
 Keycode KEY_ESCAPE = GLFW_KEY_ESCAPE;
@@ -50,7 +49,7 @@ i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, const c
 
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_FOCUSED, GL_TRUE);
   glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -68,11 +67,6 @@ i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, const c
   glfwSetFramebufferSizeCallback(window.window, framebuffer_callback);
   glfwMakeContextCurrent(window.window);
 
-  i32 glew_err = glewInit();
-  if (glew_err != GLEW_OK) {
-    fprintf(stderr, "Failed to initialize GLEW: %s\n", glewGetErrorString(glew_err));
-    return ERR;
-  }
   glfwSwapInterval(vsync ? 1 : 0);
   return NO_ERR;
 }
@@ -106,5 +100,9 @@ void platform_swap_buffers() {
 }
 
 i32 platform_close_window() {
+  if (window.window) {
+    glfwDestroyWindow(window.window);
+    glfwTerminate();
+  }
   return NO_ERR;
 }
