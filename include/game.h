@@ -4,8 +4,9 @@
 #define _GAME_H
 
 #include "common.h"
-#include "math_util.h"
 #include "memory.h"
+#include "zone.h"
+#include "math_util.h"
 #include "renderer.h"
 #include "platform.h"
 

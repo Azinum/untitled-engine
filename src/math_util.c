@@ -61,3 +61,9 @@ inline m4 orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32
 
   return result;
 }
+
+inline m4 perspective(f32 fov, f32 aspect, f32 z_near, f32 z_far) {
+  m4 result = {0};
+
+  return result;
+}

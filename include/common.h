@@ -23,4 +23,13 @@ typedef uint8_t u8;
 #define NO_ERR (0)
 #define ERR (-1)
 
+#define KB(n) (n * 1024)
+#define MB(n) (KB(n * 1024))
+#define GB(n) (MB(n * 1024))
+
+// Same as memcpy, destination and source memory areas must not overlap
+void* memory_copy(void* restrict dest, const void* restrict source, const u32 size);
+
+void memory_zero(void* restrict dest, const u32 size);
+
 #endif

@@ -192,4 +192,5 @@ void renderer_clear(u8 r, u8 g, u8 b) {
 void renderer_free() {
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
+  glDeleteProgram(basic_shader);
 }
