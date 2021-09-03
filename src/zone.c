@@ -7,6 +7,7 @@
 struct {
   u8* data;
   u32 size;
+  u32 total_alloc;
 } zone;
 
 enum Block_tag {
@@ -94,6 +95,9 @@ done:
   if (!data) {
     fprintf(stderr, "Not enough memory in zone memory region\n");
   }
+  else {
+    zone.total_alloc += size;
+  }
 
   return data;
 }
@@ -107,7 +111,12 @@ u32 zone_free(void* p) {
   }
   header->tag = TAG_BLOCK_FREE;
   memory_zero(p, header->size);
+  zone.total_alloc -= header->size;
   return header->size;
+}
+
+u32 zone_total_alloc() {
+  return zone.total_alloc;
 }
 
 void zone_memory_free() {

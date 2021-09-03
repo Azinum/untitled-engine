@@ -159,12 +159,12 @@ void upload_quad_data() {
   glBindVertexArray(0);
 }
 
-void render_rect(v3 position) {
+void render_rect(v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
 
-  m4 model = translate(V3(25, 25, 0));
-  model = m4_multiply(model, scale(V3(50, 50, 1)));
+  m4 model = translate(position);
+  model = m4_multiply(model, scale(size));
   m4 projection = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
 
   glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&projection);
