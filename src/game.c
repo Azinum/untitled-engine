@@ -23,6 +23,7 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_ESCAPE]) {
       game->running = 0;
     }
+    render_rect(V3(0, 0, 0));
     platform_swap_buffers();
     renderer_clear(30, 30, 30);
   }
@@ -32,7 +33,7 @@ i32 game_run(Game* game) {
 i32 game_start(i32 argc, char** argv) {
   Game* game = &game_state;
   game_state_init(game);
-  if (platform_open_window(800, 600, 1, 0, "game") == NO_ERR) {
+  if (platform_open_window(800, 600, 0, 0, "game") == NO_ERR) {
     renderer_init();
     game_run(game);
     platform_close_window();

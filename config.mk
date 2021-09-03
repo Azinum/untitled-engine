@@ -15,7 +15,7 @@ SRC=src/main.c
 
 INC=include
 
-FLAGS=-o ${BUILD}/${PROG} -I${INC} -pedantic -Wall
+FLAGS=-o ${BUILD}/${PROG} -I${INC} -Wall -pedantic
 
 O_DEBUG=-g -O0
 

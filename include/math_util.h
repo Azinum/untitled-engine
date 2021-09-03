@@ -40,4 +40,14 @@ typedef union m4 {
 #define V3(_x, _y, _z) ((v3) { .x = _x, .y = _y, .z = _z })
 #define V2(_x, _y) ((v2) { .x = _x, .y = _y })
 
+extern m4 m4d(float value);
+
+extern m4 m4_multiply(m4 a, m4 b);
+
+extern m4 translate(v3 a);
+
+extern m4 scale(v3 a);
+
+extern m4 orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far);
+
 #endif

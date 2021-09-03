@@ -9,7 +9,36 @@
   #include <GL/gl.h>
 #endif
 
+u32 quad_vao = 0,
+  quad_vbo = 0;
+u32 basic_shader = 0;
+
+static const char* vert_source =
+  "#version 150\n"
+  "\n"
+  "in vec4 vertex;\n"
+  "\n"
+  "uniform mat4 proj;\n"
+  "uniform mat4 model;\n"
+  "\n"
+  "void main() {\n"
+  "   gl_Position = proj * model * vec4(vertex.xy, 0, 1);\n"
+  "}\n"
+;
+
+static const char* frag_source =
+  "#version 150\n"
+  "\n"
+  "out vec4 color;\n"
+  "void main() {\n"
+  "   color = vec4(1, 0, 0, 1);\n"
+  "}\n"
+;
+
 static i32 opengl_init();
+static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
+static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
+static void upload_quad_data();
 
 i32 opengl_init() {
   i32 glew_err = glewInit();
@@ -42,8 +71,116 @@ i32 opengl_init() {
   return NO_ERR;
 }
 
+#define SHADER_ERROR_BUFFER_SIZE 512
+
+i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out) {
+	i32 result = NO_ERR;
+	i32 compile_report = 0;
+	u32 program = 0;
+	char err_log[SHADER_ERROR_BUFFER_SIZE] = {0};
+	u32 vert_shader = 0, frag_shader = 0;
+
+	vert_shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vert_shader, 1, &vert_source, NULL);
+	glCompileShader(vert_shader);
+
+	glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &compile_report);
+	if (!compile_report) {
+		glGetShaderInfoLog(vert_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+		fprintf(stderr, "error in vertex shader: %s\n", err_log);
+		result = ERR;
+		goto done;
+	}
+
+	frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(frag_shader, 1, &frag_source, NULL);
+	glCompileShader(frag_shader);
+
+	glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &compile_report);
+	if (!compile_report) {
+		glGetShaderInfoLog(frag_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+		fprintf(stderr, "error in fragment shader: %s\n", err_log);
+		result = ERR;
+		goto done;
+	}
+
+	program = glCreateProgram();
+	glAttachShader(program, vert_shader);
+	glAttachShader(program, frag_shader);
+	glLinkProgram(program);
+
+	glGetProgramiv(program, GL_VALIDATE_STATUS, &compile_report);
+#if 1
+	if (!compile_report) {
+		glGetProgramInfoLog(program, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+		fprintf(stderr, "shader compile error: %s\n", err_log);
+		goto done;
+	}
+#endif
+	*program_out = program;
+
+done:
+	if (vert_shader > 0)
+		glDeleteShader(vert_shader);
+	if (frag_shader > 0)
+		glDeleteShader(frag_shader);
+	return result;
+}
+
+void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo) {
+  glGenVertexArrays(1, vao);
+  glGenBuffers(1, vbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+  glBindVertexArray(*vao);
+  glEnableVertexAttribArray(0);
+
+  glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_size, (void*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glBindVertexArray(0);
+}
+
+void upload_quad_data() {
+  glGenVertexArrays(1, &quad_vao);
+  glGenBuffers(1, &quad_vbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+
+  glBindVertexArray(quad_vao);
+  glEnableVertexAttribArray(0);
+
+  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glBindVertexArray(0);
+}
+
+void render_rect(v3 position) {
+  u32 handle = basic_shader;
+  glUseProgram(handle);
+
+  m4 model = translate(V3(25, 25, 0));
+  model = m4_multiply(model, scale(V3(50, 50, 1)));
+  m4 projection = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
+
+  glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&projection);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (float*)&model);
+
+  glBindVertexArray(quad_vao);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(0);
+
+  glUseProgram(0);
+}
+
 i32 renderer_init() {
   opengl_init();
+  upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
+  shader_compile_from_source(vert_source, frag_source, &basic_shader);
   return NO_ERR;
 }
 
@@ -53,5 +190,6 @@ void renderer_clear(u8 r, u8 g, u8 b) {
 }
 
 void renderer_free() {
-
+  glDeleteVertexArrays(1, &quad_vao);
+  glDeleteVertexArrays(1, &quad_vbo);
 }
