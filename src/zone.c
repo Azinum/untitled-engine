@@ -101,14 +101,12 @@ done:
 u32 zone_free(void* p) {
   u32 location = (u8*)p - zone.data - sizeof(Block_header);
   Block_header* header = (Block_header*)&zone.data[location];
-  if (header->tag != TAG_BLOCK_USED) {
+  if (header->tag != TAG_BLOCK_USED || header->size > zone.size) {  // Sanity check
     fprintf(stderr, "Failed to free zone block; corrupted block header (at %u)\n", location);
     return 0;
   }
-  if (header->size < zone.size) { // Sanity check
-    header->tag = TAG_BLOCK_FREE;
-    memory_zero(p, header->size);
-  }
+  header->tag = TAG_BLOCK_FREE;
+  memory_zero(p, header->size);
   return header->size;
 }
 
