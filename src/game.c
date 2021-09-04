@@ -5,6 +5,8 @@
 #include "common.c"
 #include "memory.c"
 #include "zone.c"
+#include "image.c"
+#include "bmp.c"
 #include "math_util.c"
 #include "renderer.c"
 #include "platform.c"

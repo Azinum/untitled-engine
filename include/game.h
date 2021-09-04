@@ -6,6 +6,8 @@
 #include "common.h"
 #include "memory.h"
 #include "zone.h"
+#include "image.h"
+#include "bmp.h"
 #include "math_util.h"
 #include "renderer.h"
 #include "platform.h"

@@ -87,7 +87,6 @@ begin:
       header->size = size;
       data = &zone.data[location + sizeof(Block_header)];
       memory_zero(data, size);
-      // printf("We found enough memory! At: %u (%lu)\n", location, location + sizeof(Block_header));
       goto done;
     }
   }
@@ -103,6 +102,10 @@ done:
 }
 
 u32 zone_free(void* p) {
+  if (!p) {
+    fprintf(stderr, "Tried to free a NULL pointer\n");
+    return 0;
+  }
   u32 location = (u8*)p - zone.data - sizeof(Block_header);
   Block_header* header = (Block_header*)&zone.data[location];
   if (header->tag != TAG_BLOCK_USED || header->size > zone.size) {  // Sanity check
