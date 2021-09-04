@@ -38,7 +38,6 @@ static const char* frag_source =
 static i32 opengl_init();
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
-static void upload_quad_data();
 
 i32 opengl_init() {
   i32 glew_err = glewInit();
@@ -138,22 +137,6 @@ void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32*
   glEnableVertexAttribArray(0);
 
   glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_size, (void*)0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  glBindVertexArray(0);
-}
-
-void upload_quad_data() {
-  glGenVertexArrays(1, &quad_vao);
-  glGenBuffers(1, &quad_vbo);
-
-  glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
-
-  glBindVertexArray(quad_vao);
-  glEnableVertexAttribArray(0);
-
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glBindVertexArray(0);
