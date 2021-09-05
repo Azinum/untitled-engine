@@ -34,6 +34,8 @@ void* memory_copy(void* restrict dest, const void* restrict source, const u32 si
 
 void memory_zero(void* restrict dest, const u32 size);
 
+void memory_set(void* restrict dest, const u8 value, const u32 size);
+
 char* get_extension(const char* path);
 
 #endif

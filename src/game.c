@@ -40,6 +40,7 @@ i32 game_start(i32 argc, char** argv) {
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);
+
   if (platform_open_window(800, 600, 0, 0, "game") == NO_ERR) {
     renderer_init();
     game_run(game);

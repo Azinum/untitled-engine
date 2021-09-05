@@ -17,6 +17,7 @@ enum Block_tag {
 
 typedef struct Block_header {
   u8 tag;
+  u8 _p0, _p1, _p2; // Padding
   u32 size;
 } __attribute__((packed, aligned(ALIGNMENT))) Block_header;
 
@@ -38,6 +39,7 @@ i32 zone_memory_init(u32 size) {
     fprintf(stderr, "Zone size must be at least %u bytes\n", (u32)ZONE_MIN_SIZE);
     return ERR;
   }
+  size = ALIGN(size);
   zone.data = m_calloc(size, 1);
   if (!zone.data) {
     return ERR;
@@ -48,8 +50,34 @@ i32 zone_memory_init(u32 size) {
     .tag = TAG_BLOCK_FREE,
     .size = size - sizeof(Block_header),
   };
+  assert(zone_block.size < zone.size);
   zone_write(0, &zone_block, sizeof(Block_header));
   return NO_ERR;
+}
+
+void zone_print_all(FILE* fp) {
+  u8 byte = 0;
+  Block_header* header = NULL;
+  for (u32 index = 0; index < zone.size;) {
+    byte = zone.data[index];
+    switch (byte) {
+      case TAG_BLOCK_FREE: {
+        header = (Block_header*)&zone.data[index];
+        fprintf(fp, "BLOCK: free at %9u, %p, size: %9u\n", index, (void*)header, header->size);
+        index += header->size + sizeof(Block_header);
+        break;
+      }
+      case TAG_BLOCK_USED: {
+        header = (Block_header*)&zone.data[index];
+        fprintf(fp, "BLOCK: used at %9u, %p, size: %9u\n", index, (void*)header, header->size);
+        index += header->size + sizeof(Block_header);
+        break;
+      }
+      default:
+        ++index;
+        break;
+    }
+  }
 }
 
 void* zone_malloc(u32 size) {
@@ -59,7 +87,7 @@ void* zone_malloc(u32 size) {
   u32 location = 0;
   u32 size_total = 0;
   u8 byte = 0;
-  for (u32 index = 0; index < zone.size; ++index) {
+  for (u32 index = 0; index < zone.size;) {
 begin:
     byte = zone.data[index];
     switch (byte) {
@@ -77,7 +105,9 @@ begin:
         break;
       }
       default: {
+        assert(0);  // We should not be able to get here
         ++size_total;
+        ++index;
         break;
       }
     }
@@ -86,7 +116,15 @@ begin:
       header->tag = TAG_BLOCK_USED;
       header->size = size;
       data = &zone.data[location + sizeof(Block_header)];
-      memory_zero(data, size);
+      memory_set(data, 0, size);
+      u32 diff = size_total - size;
+      // printf("size: %i, at: %i, tag: %i, size_total: %u, diff: %u\n", header->size, location, header->tag, size_total, diff);
+      if (diff > 0) {
+        Block_header* next = (Block_header*)&zone.data[location + header->size + sizeof(Block_header)];
+        next->tag = TAG_BLOCK_FREE;
+        next->size = diff - sizeof(Block_header);
+        memory_set(next + sizeof(Block_header), 0, next->size);
+      }
       goto done;
     }
   }
@@ -122,8 +160,23 @@ u32 zone_total_alloc() {
   return zone.total_alloc;
 }
 
+void zone_dump(const char* path) {
+  FILE* fp = fopen(path, "w");
+  if (!fp) {
+    return;
+  }
+  fwrite(zone.data, zone.size, 1, fp);
+  fclose(fp);
+}
+
 void zone_memory_free() {
   if (zone.data) {
+    if (zone.total_alloc != 0) {
+      fprintf(stderr, "zone_memory_free: Memory leak!\n");
+#if 0
+      zone_print_all(stderr, 0);
+#endif
+    }
     m_free(zone.data, zone.size);
     zone.data = NULL;
     zone.size = 0;

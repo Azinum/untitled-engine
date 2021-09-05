@@ -12,6 +12,8 @@
 u32 quad_vao = 0,
   quad_vbo = 0;
 u32 basic_shader = 0;
+Image sprite_source;
+u32 sprite = 0;
 
 static const char* vert_source =
   "#version 150\n"
@@ -38,6 +40,7 @@ static const char* frag_source =
 static i32 opengl_init();
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
+static void upload_texture(Image* texture, u32* texture_id);
 
 i32 opengl_init() {
   i32 glew_err = glewInit();
@@ -142,6 +145,19 @@ void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32*
   glBindVertexArray(0);
 }
 
+void upload_texture(Image* texture, u32* texture_id) {
+  glGenTextures(1, texture_id);
+  glBindTexture(GL_TEXTURE_2D, *texture_id);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->pixels);
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void render_rect(v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
@@ -164,6 +180,8 @@ i32 renderer_init() {
   opengl_init();
   upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
   shader_compile_from_source(vert_source, frag_source, &basic_shader);
+  image_load("resource/sprite/spritesheet.bmp", &sprite_source);
+  upload_texture(&sprite_source, &sprite);
   return NO_ERR;
 }
 

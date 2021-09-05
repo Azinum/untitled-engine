@@ -12,6 +12,11 @@ void memory_zero(void* restrict dest, const u32 size) {
   for (i32 index = 0; index < size; ++index, *d++ = 0);
 }
 
+void memory_set(void* restrict dest, const u8 value, const u32 size) {
+  u8* d = (u8*)dest;
+  for (i32 index = 0; index < size; ++index, *d++ = value);
+}
+
 char* get_extension(const char* path) {
   char* iter = (char*)path;
   for (;;) {
