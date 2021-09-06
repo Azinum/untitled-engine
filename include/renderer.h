@@ -5,6 +5,11 @@
 
 #include "renderer_opengl.h"
 
+m4 model = {0};
+m4 view = {0};
+m4 perspective_proj = {0};
+m4 orthogonal_proj = {0};
+
 f32 quad_vertices[] = {
   // Vertex,  uv coord
   0.0f, 1.0f, 0.0f, 1.0f,

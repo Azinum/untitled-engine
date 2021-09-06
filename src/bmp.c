@@ -49,15 +49,18 @@ i32 bmp_load(const char* path, Image* image) {
   if (file_header.file_type == bitmap_file_type) {
     if (file_header.reserved1 == 0 && file_header.reserved2 == 0) {
       if (header.compression == 0) {
-        i32 bytes_per_pixel = header.bits_per_pixel / 8;
-        i32 width = header.width;
-        i32 height = header.height;
+        u32 bytes_per_pixel = header.bits_per_pixel / 8;
+        u32 width = header.width;
+        u32 height = header.height;
         if (image_init(width, height, 4, image) == NO_ERR) {
           fseek(fp, file_header.offset, SEEK_SET);  // Seek to the location of the pixel data
-          Color_rgba* start_pixel = (Color_rgba*)&image->pixels[0];
+          Color_bgra* start_pixel = (Color_bgra*)&image->pixels[0];
           for (i32 y = height - 1; y >= 0; --y) { // Reading row by row, from bottom to top
             for (i32 x = 0; x < width; ++x) {
-              iterate_file(start_pixel + (width * y + x), bytes_per_pixel, fp);
+              u32 location = width * y + x;
+              iterate_file(start_pixel + location, bytes_per_pixel, fp);
+              Color_bgra* pixel = start_pixel + location;
+              *pixel = bgr_to_rgb_internal(pixel);
             }
           }
         }

@@ -19,11 +19,13 @@ static const char* vert_source =
   "#version 150\n"
   "\n"
   "in vec4 vertex;\n"
+  "out vec2 uv;\n"
   "\n"
   "uniform mat4 proj;\n"
   "uniform mat4 model;\n"
   "\n"
   "void main() {\n"
+  "   uv = vertex.zw;"
   "   gl_Position = proj * model * vec4(vertex.xy, 0, 1);\n"
   "}\n"
 ;
@@ -31,9 +33,18 @@ static const char* vert_source =
 static const char* frag_source =
   "#version 150\n"
   "\n"
+  "in vec2 uv;\n"
   "out vec4 color;\n"
+  "\n"
+  "uniform sampler2D tex;\n"
+  "uniform vec2 offset;\n"
+  "uniform vec2 range;\n"
+  "\n"
   "void main() {\n"
-  "   color = vec4(1, 0, 0, 1);\n"
+  "   color = vec4(texture2D(tex, (uv * range) + offset).rgb, 1);\n"
+  "   if (color.r == 1 && color.g == 0 && color.b == 1) {\n"
+  "     discard;\n"
+  "   }\n"
   "}\n"
 ;
 
@@ -162,12 +173,20 @@ void render_rect(v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
 
-  m4 model = translate(position);
+  model = translate(position);
   model = m4_multiply(model, scale(size));
-  m4 projection = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
 
-  glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&projection);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&orthogonal_proj);
   glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (float*)&model);
+
+  v2 offset = V2(0.0f, 0);
+  v2 range = V2(0.5f, 1.0f);
+
+  glUniform2f(glGetUniformLocation(handle, "offset"), offset.x, offset.y);
+  glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, sprite);
 
   glBindVertexArray(quad_vao);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -182,6 +201,7 @@ i32 renderer_init() {
   shader_compile_from_source(vert_source, frag_source, &basic_shader);
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
+  orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
   return NO_ERR;
 }
 
@@ -191,6 +211,7 @@ void renderer_clear(u8 r, u8 g, u8 b) {
 }
 
 void renderer_free() {
+  image_unload(&sprite_source);
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
   glDeleteProgram(basic_shader);

@@ -118,7 +118,6 @@ begin:
       data = &zone.data[location + sizeof(Block_header)];
       memory_set(data, 0, size);
       u32 diff = size_total - size;
-      // printf("size: %i, at: %i, tag: %i, size_total: %u, diff: %u\n", header->size, location, header->tag, size_total, diff);
       if (diff > 0) {
         Block_header* next = (Block_header*)&zone.data[location + header->size + sizeof(Block_header)];
         next->tag = TAG_BLOCK_FREE;

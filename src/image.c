@@ -1,5 +1,23 @@
 // image.c
 
+Color_rgba bgr_to_rgb(Color_bgra* color) {
+  return (Color_rgba) {
+    .r = color->r,
+    .g = color->g,
+    .b = color->b,
+    .a = 255,
+  };
+}
+
+Color_bgra bgr_to_rgb_internal(Color_bgra* color) {
+  return (Color_bgra) {
+    .r = color->b,
+    .g = color->g,
+    .b = color->r,
+    .a = 255,
+  };
+}
+
 i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
   image->pixels = zone_malloc(bytes_per_pixel * width * height * sizeof(u8));
   if (!image->pixels) {
