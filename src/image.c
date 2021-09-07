@@ -19,8 +19,8 @@ Color_bgra bgr_to_rgb_internal(Color_bgra* color) {
 }
 
 i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
-  image->pixels = zone_malloc(bytes_per_pixel * width * height * sizeof(u8));
-  if (!image->pixels) {
+  image->data = zone_malloc(bytes_per_pixel * width * height);
+  if (!image->data) {
     return ERR;
   }
   image->width = width;
@@ -41,9 +41,9 @@ i32 image_load(const char* path, Image* image) {
 }
 
 void image_unload(Image* image) {
-  if (image->pixels) {
-    zone_free(image->pixels);
-    image->pixels = NULL;
+  if (image->data) {
+    zone_free(image->data);
+    image->data = NULL;
     memory_zero(image, sizeof(Image));
   }
 }

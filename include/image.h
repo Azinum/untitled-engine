@@ -4,7 +4,7 @@
 #define _IMAGE_H
 
 typedef struct Image {
-  u8* pixels;
+  u8* data;
   u32 width;
   u32 height;
   u16 bytes_per_pixel;

@@ -54,7 +54,7 @@ i32 bmp_load(const char* path, Image* image) {
         u32 height = header.height;
         if (image_init(width, height, 4, image) == NO_ERR) {
           fseek(fp, file_header.offset, SEEK_SET);  // Seek to the location of the pixel data
-          Color_bgra* start_pixel = (Color_bgra*)&image->pixels[0];
+          Color_bgra* start_pixel = (Color_bgra*)&image->data[0];
           for (i32 y = height - 1; y >= 0; --y) { // Reading row by row, from bottom to top
             for (i32 x = 0; x < width; ++x) {
               u32 location = width * y + x;
