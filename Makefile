@@ -7,6 +7,7 @@ all: compile run
 
 prepare:
 	mkdir -p ${BUILD}
+	cp -r ${RES} ${BUILD}
 
 compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}

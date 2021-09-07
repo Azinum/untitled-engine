@@ -4,11 +4,13 @@
 #define ALIGNMENT 16
 #define ALIGN(n) ((n % ALIGNMENT) ? (n + ALIGNMENT - (n % ALIGNMENT)) : n)
 
-struct {
+typedef struct Zone {
   u8* data;
   u32 size;
   u32 total_alloc;
-} zone;
+} Zone;
+
+Zone zone;
 
 enum Block_tag {
   TAG_BLOCK_USED = 1,
@@ -30,13 +32,13 @@ void zone_write(u32 location, void* data, u32 size) {
     memory_copy(&zone.data[location], data, size);
   }
   else {
-    assert(0 && "write outside memory zone");
+    assert("zone_write: Write outside memory zone" && 0);
   }
 }
 
 i32 zone_memory_init(u32 size) {
   if (size < ZONE_MIN_SIZE) {
-    fprintf(stderr, "Zone size must be at least %u bytes\n", (u32)ZONE_MIN_SIZE);
+    fprintf(stderr, "zone_memory_init: Zone size must be at least %u bytes (got %u)\n", (u32)ZONE_MIN_SIZE, size);
     return ERR;
   }
   size = ALIGN(size);
@@ -129,7 +131,7 @@ begin:
   }
 done:
   if (!data) {
-    fprintf(stderr, "Not enough memory in zone memory region\n");
+    fprintf(stderr, "zone_malloc: Not enough memory in zone memory region\n");
   }
   else {
     zone.total_alloc += size;
@@ -140,13 +142,13 @@ done:
 
 u32 zone_free(void* p) {
   if (!p) {
-    fprintf(stderr, "Tried to free a NULL pointer\n");
+    fprintf(stderr, "zone_free: Tried to free a NULL pointer\n");
     return 0;
   }
   u32 location = (u8*)p - zone.data - sizeof(Block_header);
   Block_header* header = (Block_header*)&zone.data[location];
   if (header->tag != TAG_BLOCK_USED || header->size > zone.size) {  // Sanity check
-    fprintf(stderr, "Failed to free zone block; corrupted block header (at %u)\n", location);
+    fprintf(stderr, "zone_free: Failed to free zone block; corrupted block header (at %u, %p)\n", location, (void*)header);
     return 0;
   }
   header->tag = TAG_BLOCK_FREE;

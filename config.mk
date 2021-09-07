@@ -15,6 +15,8 @@ SRC=src/main.c
 
 INC=include
 
+RES=resource
+
 FLAGS=-o ${BUILD}/${PROG} -I${INC} -Wall -pedantic
 
 O_DEBUG=-g -O0
