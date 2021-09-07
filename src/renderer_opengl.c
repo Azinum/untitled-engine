@@ -9,44 +9,13 @@
   #include <GL/gl.h>
 #endif
 
+#include "shader.c"
+
 u32 quad_vao = 0,
   quad_vbo = 0;
 u32 basic_shader = 0;
 Image sprite_source;
 u32 sprite = 0;
-
-static const char* vert_source =
-  "#version 150\n"
-  "\n"
-  "in vec4 vertex;\n"
-  "out vec2 uv;\n"
-  "\n"
-  "uniform mat4 proj;\n"
-  "uniform mat4 model;\n"
-  "\n"
-  "void main() {\n"
-  "   uv = vertex.zw;"
-  "   gl_Position = proj * model * vec4(vertex.xy, 0, 1);\n"
-  "}\n"
-;
-
-static const char* frag_source =
-  "#version 150\n"
-  "\n"
-  "in vec2 uv;\n"
-  "out vec4 color;\n"
-  "\n"
-  "uniform sampler2D tex;\n"
-  "uniform vec2 offset;\n"
-  "uniform vec2 range;\n"
-  "\n"
-  "void main() {\n"
-  "   color = vec4(texture2D(tex, (uv * range) + offset).rgb, 1);\n"
-  "   if (color.r == 1 && color.g == 0 && color.b == 1) {\n"
-  "     discard;\n"
-  "   }\n"
-  "}\n"
-;
 
 static i32 opengl_init();
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
@@ -198,7 +167,7 @@ void render_rect(v3 position, v3 size) {
 i32 renderer_init() {
   opengl_init();
   upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
-  shader_compile_from_source(vert_source, frag_source, &basic_shader);
+  shader_compile_from_source(rect_vert, rect_frag, &basic_shader);
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
   orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);

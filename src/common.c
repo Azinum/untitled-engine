@@ -19,10 +19,10 @@ void memory_set(void* restrict dest, const u8 value, const u32 size) {
 
 char* get_extension(const char* path) {
   char* iter = (char*)path;
-  for (;;) {
+  do {
     char ch = *iter++;
     if (ch == '.' || ch == '\0')
       break;
-  }
+  } while (1);
   return iter;
 }
