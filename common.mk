@@ -23,12 +23,25 @@ ifeq (${PLATFORM}, LINUX)
 		FLAGS+=-D USE_X11 -I${X11_INC}
 	elif (${USE_GLFW}, 1)
 		LIBS+=-lglfw
+		FLAGS+=-D USE_GLFW
 	endif
 	ifeq (${USE_OPENGL, 1})
-		LIBS+=-lGL -lGLU -lGLEW
+		LIBS+=-lGLEW -lGL -lGLU
 	endif
 endif
 
 ifeq (${PLATFORM}, WINDOWS)
 
+endif
+
+ifeq (${PLATFORM}, DARWIN)
+	FLAGS+=-Wno-missing-braces
+	ifeq (${USE_GLFW}, 1)
+		LIBS+=-lglfw
+		FLAGS+=-D USE_GLFW
+	endif
+	ifeq (${USE_OPENGL}, 1)
+		LIBS+=-lGLEW -framework OpenGL
+		FLAGS+=-D USE_OPENGL
+	endif
 endif

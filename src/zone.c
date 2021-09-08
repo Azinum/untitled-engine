@@ -124,7 +124,7 @@ begin:
         Block_header* next = (Block_header*)&zone.data[location + header->size + sizeof(Block_header)];
         next->tag = TAG_BLOCK_FREE;
         next->size = diff - sizeof(Block_header);
-        memory_set(next + sizeof(Block_header), 0, next->size);
+        // memory_set(next + sizeof(Block_header), 0, next->size - sizeof(Block_header)); // FIXME: Gives segmentation fault
       }
       goto done;
     }

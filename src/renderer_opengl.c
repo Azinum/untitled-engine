@@ -92,7 +92,7 @@ i32 shader_compile_from_source(const char* vert_source, const char* frag_source,
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &compile_report);
-#if 1
+#if 0
 	if (!compile_report) {
 		glGetProgramInfoLog(program, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
 		fprintf(stderr, "shader compile error: %s\n", err_log);

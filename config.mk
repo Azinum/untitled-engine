@@ -1,8 +1,8 @@
 # config.mk
 
 USE_X11?=0
-USE_OPENGL?=0
-USE_GLFW?=0
+USE_OPENGL?=1
+USE_GLFW?=1
 NO_SSE?=0
 
 CC=gcc
@@ -25,6 +25,6 @@ O_DEBUG=-g -O0
 
 O_RELEASE=-O3 -ffast-math
 
-O_FLAG=${O_RELEASE}
+O_FLAG=${O_DEBUG}
 
 X11_INC=/usr/include/X11

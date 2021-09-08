@@ -9,7 +9,7 @@ prepare:
 	mkdir -p ${BUILD}
 	cp -r ${RES} ${BUILD}
 
-compile:
+compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
 
 run:

@@ -2,7 +2,13 @@
 // Use glfw as a platform layer 'backend'
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+
+#if __APPLE__
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
+
 #include <GLFW/glfw3.h>
 
 Keycode KEY_ESCAPE = GLFW_KEY_ESCAPE;
