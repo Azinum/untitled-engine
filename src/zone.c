@@ -65,13 +65,13 @@ void zone_print_all(FILE* fp) {
     switch (byte) {
       case TAG_BLOCK_FREE: {
         header = (Block_header*)&zone.data[index];
-        fprintf(fp, "BLOCK: free at %9u, %p, size: %9u\n", index, (void*)header, header->size);
+        fprintf(fp, "BLOCK: free at %9u, %p, size: %9u bytes\n", index, (void*)header, header->size);
         index += header->size + sizeof(Block_header);
         break;
       }
       case TAG_BLOCK_USED: {
         header = (Block_header*)&zone.data[index];
-        fprintf(fp, "BLOCK: used at %9u, %p, size: %9u\n", index, (void*)header, header->size);
+        fprintf(fp, "BLOCK: used at %9u, %p, size: %9u bytes\n", index, (void*)header, header->size);
         index += header->size + sizeof(Block_header);
         break;
       }

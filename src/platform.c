@@ -4,6 +4,8 @@
   #include "platform_x11.c"
 #elif USE_NULL
   #include "platform_null.c"
-#else
+#elif USE_GLFW
   #include "platform_glfw.c"
+#else
+  #include "platform_win.c"
 #endif

@@ -3,7 +3,11 @@
 #ifndef _RENDERER_H
 #define _RENDERER_H
 
-#include "renderer_opengl.h"
+#if USE_OPENGL
+  #include "renderer_opengl.h"
+#else
+  #include "renderer_null.h"
+#endif
 
 m4 model = {0};
 m4 view = {0};

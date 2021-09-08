@@ -18,11 +18,17 @@ ifndef PLATFORM
 endif
 
 ifeq (${PLATFORM}, LINUX)
-	LIBS+=-lGL -lGLU
 	ifeq (${USE_X11}, 1)
 		LIBS+=-lX11
 		FLAGS+=-D USE_X11 -I${X11_INC}
-	else
+	elif (${USE_GLFW}, 1)
 		LIBS+=-lglfw
 	endif
+	ifeq (${USE_OPENGL, 1})
+		LIBS+=-lGL -lGLU -lGLEW
+	endif
+endif
+
+ifeq (${PLATFORM}, WINDOWS)
+
 endif

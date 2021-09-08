@@ -9,9 +9,8 @@ prepare:
 	mkdir -p ${BUILD}
 	cp -r ${RES} ${BUILD}
 
-compile: prepare
+compile:
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
-	strip ${BUILD}/${PROG}
 
 run:
 	./${BUILD}/${PROG}
