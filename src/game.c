@@ -28,7 +28,8 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_ESCAPE]) {
       game->running = 0;
     }
-    render_rect(V3(25, 25, 0), V3(128, 128, 1));
+    render_rect(V3(25, 25, 0), V3(64, 64, 1));
+    render_rect(V3(125, 50, 0), V3(64, 64, 1));
     platform_swap_buffers();
     renderer_clear(30, 30, 30);
   }

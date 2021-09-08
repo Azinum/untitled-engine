@@ -1,4 +1,4 @@
-// rect.vert
+// sprite.vert
 
 #version 150
 

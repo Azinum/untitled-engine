@@ -3,7 +3,7 @@
 #ifndef _SHADER_H
 #define _SHADER_H
 
-extern char rect_vert[];
-extern char rect_frag[];
+extern char sprite_vert[];
+extern char sprite_frag[];
 
 #endif

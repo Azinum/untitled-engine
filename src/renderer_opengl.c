@@ -148,8 +148,8 @@ void render_rect(v3 position, v3 size) {
   glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&orthogonal_proj);
   glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (float*)&model);
 
-  v2 offset = V2(0.0f, 0);
-  v2 range = V2(0.5f, 1.0f);
+  v2 offset = V2((1.0f / 20.0f) * 2, 0.0f);
+  v2 range = V2((1.0f / 20.0f), 1.0f);
 
   glUniform2f(glGetUniformLocation(handle, "offset"), offset.x, offset.y);
   glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
@@ -167,7 +167,7 @@ void render_rect(v3 position, v3 size) {
 i32 renderer_init() {
   opengl_init();
   upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
-  shader_compile_from_source(rect_vert, rect_frag, &basic_shader);
+  shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
   orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);

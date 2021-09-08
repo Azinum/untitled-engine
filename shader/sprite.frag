@@ -1,4 +1,4 @@
-// rect.frag
+// sprite.frag
 
 #version 150
 
