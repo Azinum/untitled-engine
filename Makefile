@@ -1,5 +1,9 @@
 # Makefile
 
+ifeq ("${wildcard config.mk}", "")
+$(shell cp config.default.mk config.mk)
+endif
+
 include config.mk
 include common.mk
 
