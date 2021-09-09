@@ -118,13 +118,14 @@ begin:
       header->tag = TAG_BLOCK_USED;
       header->size = size;
       data = &zone.data[location + sizeof(Block_header)];
-      memory_set(data, 0, size);
-      u32 diff = size_total - size;
+      u32 diff = size_total - (size + sizeof(Block_header));
       if (diff > 0) {
-        Block_header* next = (Block_header*)&zone.data[location + header->size + sizeof(Block_header)];
-        next->tag = TAG_BLOCK_FREE;
-        next->size = diff - sizeof(Block_header);
-        // memory_set(next + sizeof(Block_header), 0, next->size - sizeof(Block_header)); // FIXME: Gives segmentation fault
+        Block_header next = (Block_header) {
+          .tag = TAG_BLOCK_FREE,
+          .size = diff - sizeof(Block_header),
+        };
+        u32 next_location = location + header->size + sizeof(Block_header);
+        zone_write(next_location, &next, sizeof(Block_header));
       }
       goto done;
     }
@@ -138,6 +139,14 @@ done:
   }
 
   return data;
+}
+
+void* zone_calloc(u32 count, u32 size) {
+  void* p = zone_malloc(count * size);
+  if (p) {
+    memory_set(p, 0, count * size);
+  }
+  return p;
 }
 
 u32 zone_free(void* p) {

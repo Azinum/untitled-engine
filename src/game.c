@@ -33,6 +33,7 @@ i32 game_run(Game* game) {
     platform_swap_buffers();
     renderer_clear(30, 30, 30);
   }
+  zone_print_all(stdout);
   return NO_ERR;
 }
 
