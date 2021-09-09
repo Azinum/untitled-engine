@@ -25,6 +25,6 @@ O_DEBUG=-g -O0
 
 O_RELEASE=-O3 -ffast-math
 
-O_FLAG=${O_DEBUG}
+O_FLAG=${O_RELEASE}
 
 X11_INC=/usr/include/X11
