@@ -13,9 +13,17 @@ typedef struct Mesh {
   v2* uv;
   u32 uv_count;
 
+  u32* uv_index;
+  u32 uv_index_count;
+
   v3* normal;
   u32 normal_count;
+
+  u32* normal_index;
+  u32 normal_index_count;
 } Mesh;
+
+#include "mesh_wavefront.h"
 
 void mesh_init(Mesh* mesh);
 

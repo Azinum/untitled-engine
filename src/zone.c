@@ -60,18 +60,21 @@ i32 zone_memory_init(u32 size) {
 void zone_print_all(FILE* fp) {
   u8 byte = 0;
   Block_header* header = NULL;
+
+  fprintf(fp, "Zone memory: %u/%u bytes (%.2g %%)\n", zone.total_alloc, zone.size, ((float)zone.total_alloc / zone.size * 100.0f));
+
   for (u32 index = 0; index < zone.size;) {
     byte = zone.data[index];
     switch (byte) {
       case TAG_BLOCK_FREE: {
         header = (Block_header*)&zone.data[index];
-        fprintf(fp, "BLOCK: free at %9u, %p, size: %9u bytes\n", index, (void*)header, header->size);
+        fprintf(fp, "  BLOCK: free at %9u, %p, size: %9u bytes, %10.4g MB\n", index, (void*)header, header->size, (f32)header->size / MB(1));
         index += header->size + sizeof(Block_header);
         break;
       }
       case TAG_BLOCK_USED: {
         header = (Block_header*)&zone.data[index];
-        fprintf(fp, "BLOCK: used at %9u, %p, size: %9u bytes\n", index, (void*)header, header->size);
+        fprintf(fp, "  BLOCK: used at %9u, %p, size: %9u bytes, %10.4g MB\n", index, (void*)header, header->size, (f32)header->size / MB(1));
         index += header->size + sizeof(Block_header);
         break;
       }

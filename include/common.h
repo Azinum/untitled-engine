@@ -27,6 +27,11 @@ typedef uint8_t u8;
 #define MB(n) (KB(n * 1024))
 #define GB(n) (MB(n * 1024))
 
+typedef struct Buffer {
+  char* data;
+  u32 size;
+} Buffer;
+
 // Same as memcpy, destination and source memory areas must not overlap
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size);
 
@@ -39,5 +44,7 @@ char* get_extension(const char* path);
 i32 string_cmp(const char* s0, const char* s1);
 
 i32 string_n_cmp(const char* s0, const char* s1, u32 size);
+
+i32 read_file(const char* path, Buffer* buffer);
 
 #endif

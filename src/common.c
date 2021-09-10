@@ -61,3 +61,36 @@ i32 string_n_cmp(const char* s0, const char* s1, u32 size) {
   } while (left && right && iterations < size);
   return result;
 }
+
+i32 read_file(const char* path, Buffer* buffer) {
+	i32 result = NO_ERR;
+	u32 num_bytes_read = 0;
+
+	FILE* fp = fopen(path, "rb");
+	if (!fp) {
+		fprintf(stderr, "File '%s' does not exist\n", path);
+		return ERR;
+	}
+
+	fseek(fp, 0, SEEK_END);
+	u32 size = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	buffer->data = (char*)zone_malloc(size * sizeof(char));
+	buffer->size = size;
+	if (!buffer->data) {
+		buffer->size = 0;
+		result = ERR;
+		goto done;
+	}
+
+	num_bytes_read = fread(buffer->data, 1, size, fp);
+	if (num_bytes_read != size) {
+		fprintf(stderr, "Failed to read file '%s'\n", path);
+		result = ERR;
+		goto done;
+	}
+
+done:
+	fclose(fp);
+	return result;
+}

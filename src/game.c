@@ -25,9 +25,17 @@ i32 game_state_init(Game* game) {
 }
 
 i32 game_run(Game* game) {
+
+  Mesh cube_mesh;
+  mesh_load("resource/mesh/cube.obj", &cube_mesh);
+  mesh_unload(&cube_mesh);
+
   while (game->running && platform_handle_events() >= 0) {
     if (key_pressed[KEY_ESCAPE]) {
       game->running = 0;
+    }
+    if (key_pressed[KEY_0]) {
+      zone_print_all(stdout);
     }
     render_rect(V3(25, 25, 0), V3(64, 64, 1));
     render_rect(V3(125, 50, 0), V3(64, 64, 1));
