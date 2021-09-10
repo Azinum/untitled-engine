@@ -5,9 +5,10 @@
 #include "common.c"
 #include "memory.c"
 #include "zone.c"
+#include "math_util.c"
 #include "image.c"
 #include "bmp.c"
-#include "math_util.c"
+#include "mesh.c"
 #include "renderer.c"
 #include "platform.c"
 #include "entity.c"
@@ -33,7 +34,6 @@ i32 game_run(Game* game) {
     platform_swap_buffers();
     renderer_clear(30, 30, 30);
   }
-  zone_print_all(stdout);
   return NO_ERR;
 }
 

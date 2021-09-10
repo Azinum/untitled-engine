@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <string.h> // strcmp
-
 typedef float f32;
 typedef double f64;
 typedef int32_t i32;
@@ -37,5 +35,9 @@ void memory_zero(void* restrict dest, const u32 size);
 void memory_set(void* restrict dest, const u8 value, const u32 size);
 
 char* get_extension(const char* path);
+
+i32 string_cmp(const char* s0, const char* s1);
+
+i32 string_n_cmp(const char* s0, const char* s1, u32 size);
 
 #endif

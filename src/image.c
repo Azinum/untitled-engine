@@ -31,7 +31,7 @@ i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
 
 i32 image_load(const char* path, Image* image) {
   char* ext = get_extension(path);
-  if (!strcmp(ext, "bmp")) {
+  if (!string_cmp(ext, "bmp")) {
     return bmp_load(path, image);
   }
   else {
