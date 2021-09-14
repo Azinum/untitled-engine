@@ -3,6 +3,7 @@
 #include "game.h"
 
 #include "common.c"
+#include "config.c"
 #include "memory.c"
 #include "zone.c"
 #include "math_util.c"
@@ -12,8 +13,6 @@
 #include "renderer.c"
 #include "platform.c"
 #include "entity.c"
-
-#define ZONE_MEMORY MB(50)
 
 static i32 game_state_init(Game* game);
 static i32 game_run(Game* game);
@@ -39,7 +38,8 @@ i32 game_run(Game* game) {
     }
     render_rect(V3(25, 25, 0), V3(64, 64, 1));
     render_rect(V3(125, 50, 0), V3(64, 64, 1));
-    platform_swap_buffers();
+
+    renderer_swap_buffers();
     renderer_clear(30, 30, 30);
   }
   return NO_ERR;
@@ -51,7 +51,7 @@ i32 game_start(i32 argc, char** argv) {
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);
 
-  if (platform_open_window(800, 600, 1, 0, "game") == NO_ERR) {
+  if (platform_open_window(WIN_WIDTH, WIN_HEIGHT, 1, 0, "game") == NO_ERR) {
     renderer_init();
     game_run(game);
     platform_close_window();

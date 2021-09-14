@@ -174,6 +174,10 @@ i32 renderer_init() {
   return NO_ERR;
 }
 
+void renderer_swap_buffers() {
+  platform_swap_buffers();
+}
+
 void renderer_clear(u8 r, u8 g, u8 b) {
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

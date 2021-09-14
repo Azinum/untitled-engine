@@ -27,6 +27,8 @@ f32 quad_vertices[] = {
 
 i32 renderer_init();
 
+void renderer_swap_buffers();
+
 void renderer_clear(u8 r, u8 g, u8 b);
 
 void renderer_free();
