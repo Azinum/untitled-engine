@@ -202,6 +202,13 @@ u32 zone_free(void* p) {
   return header->size;
 }
 
+u32 zone_try_free(void* p) {
+  if (p) {
+    return zone_free(p);
+  }
+  return 0;
+}
+
 u32 zone_total_alloc() {
   return zone.total_alloc;
 }

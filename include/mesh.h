@@ -27,6 +27,10 @@ typedef struct Mesh {
 
 void mesh_init(Mesh* mesh);
 
+void mesh_print(FILE* fp, Mesh* mesh);
+
+i32 mesh_write(const char* path, Mesh* mesh);
+
 i32 mesh_load(const char* path, Mesh* mesh);
 
 void mesh_unload(Mesh* mesh);

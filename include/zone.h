@@ -15,6 +15,8 @@ void* zone_realloc(void* p, u32 new_size);
 
 u32 zone_free(void* p);
 
+u32 zone_try_free(void* p);
+
 u32 zone_total_alloc();
 
 void zone_dump(const char* path);

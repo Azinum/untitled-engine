@@ -27,7 +27,7 @@ i32 game_run(Game* game) {
 
   Mesh cube_mesh;
   mesh_load("resource/mesh/cube.obj", &cube_mesh);
-  mesh_unload(&cube_mesh);
+  mesh_write("temp.obj", &cube_mesh);
 
   while (game->running && platform_handle_events() >= 0) {
     if (key_pressed[KEY_ESCAPE]) {
@@ -42,6 +42,7 @@ i32 game_run(Game* game) {
     renderer_swap_buffers();
     renderer_clear(30, 30, 30);
   }
+  mesh_unload(&cube_mesh);
   return NO_ERR;
 }
 

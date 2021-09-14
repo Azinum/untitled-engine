@@ -1,5 +1,14 @@
 // common.c
 
+void buffer_free(Buffer* buffer) {
+  assert(buffer);
+  if (buffer->data) {
+    zone_free(buffer->data);
+    buffer->data = NULL;
+    buffer->size = 0;
+  }
+}
+
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size) {
   u8* d = (u8*)dest;
   u8* s = (u8*)source;
@@ -68,7 +77,7 @@ i32 read_file(const char* path, Buffer* buffer) {
 
 	FILE* fp = fopen(path, "rb");
 	if (!fp) {
-		fprintf(stderr, "File '%s' does not exist\n", path);
+		fprintf(stderr, "read_file: File '%s' does not exist\n", path);
 		return ERR;
 	}
 
@@ -85,7 +94,7 @@ i32 read_file(const char* path, Buffer* buffer) {
 
 	num_bytes_read = fread(buffer->data, 1, size, fp);
 	if (num_bytes_read != size) {
-		fprintf(stderr, "Failed to read file '%s'\n", path);
+		fprintf(stderr, "read_file: Failed to read file '%s'\n", path);
 		result = ERR;
 		goto done;
 	}

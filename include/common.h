@@ -31,6 +31,8 @@ typedef struct Buffer {
   u32 size;
 } Buffer;
 
+void buffer_free(Buffer* buffer);
+
 // Same as memcpy, destination and source memory areas must not overlap
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size);
 
