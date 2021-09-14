@@ -56,57 +56,57 @@ i32 opengl_init() {
 #define SHADER_ERROR_BUFFER_SIZE 512
 
 i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out) {
-	i32 result = NO_ERR;
-	i32 compile_report = 0;
-	u32 program = 0;
-	char err_log[SHADER_ERROR_BUFFER_SIZE] = {0};
-	u32 vert_shader = 0, frag_shader = 0;
+  i32 result = NO_ERR;
+  i32 compile_report = 0;
+  u32 program = 0;
+  char err_log[SHADER_ERROR_BUFFER_SIZE] = {0};
+  u32 vert_shader = 0, frag_shader = 0;
 
-	vert_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vert_shader, 1, &vert_source, NULL);
-	glCompileShader(vert_shader);
+  vert_shader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vert_shader, 1, &vert_source, NULL);
+  glCompileShader(vert_shader);
 
-	glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &compile_report);
-	if (!compile_report) {
-		glGetShaderInfoLog(vert_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
-		fprintf(stderr, "error in vertex shader: %s\n", err_log);
-		result = ERR;
-		goto done;
-	}
+  glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &compile_report);
+  if (!compile_report) {
+    glGetShaderInfoLog(vert_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+    fprintf(stderr, "error in vertex shader: %s\n", err_log);
+    result = ERR;
+    goto done;
+  }
 
-	frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(frag_shader, 1, &frag_source, NULL);
-	glCompileShader(frag_shader);
+  frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(frag_shader, 1, &frag_source, NULL);
+  glCompileShader(frag_shader);
 
-	glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &compile_report);
-	if (!compile_report) {
-		glGetShaderInfoLog(frag_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
-		fprintf(stderr, "error in fragment shader: %s\n", err_log);
-		result = ERR;
-		goto done;
-	}
+  glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &compile_report);
+  if (!compile_report) {
+    glGetShaderInfoLog(frag_shader, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+    fprintf(stderr, "error in fragment shader: %s\n", err_log);
+    result = ERR;
+    goto done;
+  }
 
-	program = glCreateProgram();
-	glAttachShader(program, vert_shader);
-	glAttachShader(program, frag_shader);
-	glLinkProgram(program);
+  program = glCreateProgram();
+  glAttachShader(program, vert_shader);
+  glAttachShader(program, frag_shader);
+  glLinkProgram(program);
 
-	glGetProgramiv(program, GL_VALIDATE_STATUS, &compile_report);
+  glGetProgramiv(program, GL_VALIDATE_STATUS, &compile_report);
 #if 0
-	if (!compile_report) {
-		glGetProgramInfoLog(program, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
-		fprintf(stderr, "shader compile error: %s\n", err_log);
-		goto done;
-	}
+  if (!compile_report) {
+    glGetProgramInfoLog(program, SHADER_ERROR_BUFFER_SIZE, NULL, err_log);
+    fprintf(stderr, "shader compile error: %s\n", err_log);
+    goto done;
+  }
 #endif
-	*program_out = program;
+  *program_out = program;
 
 done:
-	if (vert_shader > 0)
-		glDeleteShader(vert_shader);
-	if (frag_shader > 0)
-		glDeleteShader(frag_shader);
-	return result;
+  if (vert_shader > 0)
+    glDeleteShader(vert_shader);
+  if (frag_shader > 0)
+    glDeleteShader(frag_shader);
+  return result;
 }
 
 void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo) {
