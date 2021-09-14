@@ -26,6 +26,7 @@ typedef struct Block_header {
 #define ZONE_MIN_SIZE (u32)sizeof(Block_header)
 
 static void zone_write(u32 location, void* data, u32 size);
+static i32 zone_fetch_block_header(void* p, Block_header* header);
 
 void zone_write(u32 location, void* data, u32 size) {
   if (location + size < zone.size) {
@@ -34,6 +35,11 @@ void zone_write(u32 location, void* data, u32 size) {
   else {
     assert("zone_write: Write outside memory zone" && 0);
   }
+}
+
+i32 zone_fetch_block_header(void* p, Block_header* header) {
+  *header = *((Block_header*)p - 1);
+  return NO_ERR;
 }
 
 i32 zone_memory_init(u32 size) {
@@ -150,6 +156,19 @@ void* zone_calloc(u32 count, u32 size) {
     memory_set(p, 0, count * size);
   }
   return p;
+}
+
+void* zone_realloc(void* p, u32 new_size) {
+  assert(p);
+  void* p_new = zone_malloc(new_size);
+  if (p_new) {
+    Block_header p_block = {0};
+    zone_fetch_block_header(p, &p_block);
+    assert(p_block.tag == TAG_BLOCK_USED);
+    memory_copy(p_new, p, p_block.size);
+    zone_free(p);
+  }
+  return p_new;
 }
 
 u32 zone_free(void* p) {
