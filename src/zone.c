@@ -1,5 +1,6 @@
 // zone.c
 // Basic zone memory allocator
+// TODO(lucas): Incorporate some type of temporary storage
 
 #define ALIGNMENT 16
 #define ALIGN(n) ((n % ALIGNMENT) ? (n + ALIGNMENT - (n % ALIGNMENT)) : n)

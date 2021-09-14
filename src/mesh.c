@@ -9,6 +9,8 @@ void mesh_sort_indices(Mesh* mesh) {
 }
 
 void mesh_init(Mesh* mesh) {
+  mesh->data = NULL;
+
   mesh->vertex = NULL;
   mesh->vertex_count = 0;
 
@@ -87,12 +89,17 @@ i32 mesh_load(const char* path, Mesh* mesh) {
 }
 
 void mesh_unload(Mesh* mesh) {
-  zone_try_free(mesh->vertex);
-  zone_try_free(mesh->vertex_index);
-  zone_try_free(mesh->uv);
-  zone_try_free(mesh->uv_index);
-  zone_try_free(mesh->normal);
-  zone_try_free(mesh->normal_index);
+  if (mesh->data) {
+    zone_try_free(mesh->data);
+  }
+  else {
+    zone_try_free(mesh->vertex);
+    zone_try_free(mesh->vertex_index);
+    zone_try_free(mesh->uv);
+    zone_try_free(mesh->uv_index);
+    zone_try_free(mesh->normal);
+    zone_try_free(mesh->normal_index);
+  }
 
   memory_set(mesh, 0, sizeof(Mesh));
 }

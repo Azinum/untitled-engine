@@ -4,23 +4,21 @@
 #define _MESH_H
 
 typedef struct Mesh {
-  v3* vertex;
   u32  vertex_count;
-
-  u32* vertex_index;
   u32 vertex_index_count;
-
-  v2* uv;
   u32 uv_count;
-
-  u32* uv_index;
   u32 uv_index_count;
-
-  v3* normal;
   u32 normal_count;
-
-  u32* normal_index;
   u32 normal_index_count;
+
+  void* data; // Data is stored contiguously if this is populated
+
+  v3* vertex;
+  u32* vertex_index;
+  v2* uv;
+  u32* uv_index;
+  v3* normal;
+  u32* normal_index;
 } Mesh;
 
 #include "mesh_wavefront.h"
