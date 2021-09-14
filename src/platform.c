@@ -7,5 +7,5 @@
 #elif USE_GLFW
   #include "platform_glfw.c"
 #else
-  #include "platform_win.c"
+  #error "no platform specified"
 #endif
