@@ -2,12 +2,6 @@
 
 #include "mesh_wavefront.c"
 
-static void mesh_sort_indices(Mesh* mesh);
-
-void mesh_sort_indices(Mesh* mesh) {
-
-}
-
 void mesh_init(Mesh* mesh) {
   mesh->data = NULL;
 

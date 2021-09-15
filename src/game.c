@@ -55,6 +55,7 @@ i32 game_start(i32 argc, char** argv) {
   game_state_init(game);
 
   if (platform_open_window(WIN_WIDTH, WIN_HEIGHT, 1, 0, "game") == NO_ERR) {
+    platform_set_framebuffer_callback(renderer_framebuffer_cb);
     renderer_init();
     game_run(game);
     platform_close_window();

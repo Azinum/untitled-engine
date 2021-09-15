@@ -270,8 +270,7 @@ i32 renderer_init() {
   init_state(&renderer);
 
   view = m4d(1.0f);
-  orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
-  perspective_proj = perspective(80, 4/3.0f, 0.1f, 1000.0f);
+  renderer_framebuffer_cb(platform_window_width(), platform_window_height());
 
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);

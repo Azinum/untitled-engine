@@ -42,6 +42,10 @@ i32 platform_handle_events();
 
 void platform_swap_buffers();
 
+i32 platform_window_width();
+
+i32 platform_window_height();
+
 i32 platform_close_window();
 
 #endif
