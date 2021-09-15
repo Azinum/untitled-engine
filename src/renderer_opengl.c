@@ -11,16 +11,39 @@
 
 #include "shader.c"
 
+#define DRAW_CALL(call) call; renderer.draw_calls++
+
 u32 quad_vao = 0,
   quad_vbo = 0;
-u32 basic_shader = 0;
+u32 basic_shader = 0,
+  diffuse_shader = 0;
 Image sprite_source;
 u32 sprite = 0;
 
+typedef struct Model {
+  u32 draw_count;
+  u32 vao;
+  u32 vbo;
+  u32 ebo;
+} Model;
+
+#define MAX_MODEL 32
+
+typedef struct Renderer {
+  u32 draw_calls;
+  Model models[MAX_MODEL];
+  u32 model_count;
+} Renderer;
+
+Renderer renderer;
+
 static i32 opengl_init();
+static i32 init_state(Renderer* r);
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
 static void upload_texture(Image* texture, u32* texture_id);
+static void upload_model(Mesh* mesh, Model* model);
+static void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, void* data);
 
 i32 opengl_init() {
   i32 glew_err = glewInit();
@@ -50,6 +73,12 @@ i32 opengl_init() {
   fprintf(stdout, "GL VERSION:   %s\n", glGetString(GL_VERSION));
   fprintf(stdout, "GLSL VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
+  return NO_ERR;
+}
+
+i32 init_state(Renderer* r) {
+  r->draw_calls = 0;
+  r->model_count = 0;
   return NO_ERR;
 }
 
@@ -138,6 +167,33 @@ void upload_texture(Image* texture, u32* texture_id) {
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void upload_model(Mesh* mesh, Model* model) {
+  model->draw_count = mesh->vertex_index_count;
+
+  glGenVertexArrays(1, &model->vao);
+  glBindVertexArray(model->vao);
+
+  glGenBuffers(1, &model->ebo);
+
+  store_attribute(model, 0, 3, mesh->vertex_count * sizeof(v3), &mesh->vertex[0]);
+  store_attribute(model, 1, 2, mesh->uv_count * sizeof(v2), &mesh->uv[0]);
+  store_attribute(model, 2, 3, mesh->normal_count * sizeof(v3), &mesh->normal[0]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->vertex_index_count * sizeof(u32), &mesh->vertex_index[0], GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+}
+
+void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, void* data) {
+  glEnableVertexAttribArray(attribute_index);
+  glGenBuffers(1, &model->vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, model->vbo);
+  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+  glVertexAttribPointer(attribute_index, count, GL_FLOAT, GL_FALSE, 0, NULL);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void render_rect(v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
@@ -145,8 +201,8 @@ void render_rect(v3 position, v3 size) {
   model = translate(position);
   model = m4_multiply(model, scale(size));
 
-  glUniformMatrix4fv(glGetUniformLocation(handle, "proj"), 1, GL_FALSE, (float*)&orthogonal_proj);
-  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (float*)&model);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&orthogonal_proj);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
 
   v2 offset = V2((1.0f / 20.0f) * 2, 0.0f);
   v2 range = V2((1.0f / 20.0f), 1.0f);
@@ -164,21 +220,75 @@ void render_rect(v3 position, v3 size) {
   glUseProgram(0);
 }
 
+void render_model(i32 model_id, v3 position, v3 size) {
+  if (model_id < 0 || model_id >= renderer.model_count) {
+    return;
+  }
+  u32 handle = diffuse_shader;
+  glUseProgram(handle);
+
+  model = translate(position);
+
+  // TODO(lucas): Rotations
+
+  model = m4_multiply(model, scale(size));
+
+  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&perspective_proj);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "view"), 1, GL_FALSE, (f32*)&view);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
+
+  Model* m = &renderer.models[model_id];
+
+  glBindVertexArray(m->vao);
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+
+  DRAW_CALL(glDrawElements(GL_TRIANGLES, m->draw_count, GL_UNSIGNED_INT, 0));
+
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
+
+  glBindVertexArray(0);
+
+  glUseProgram(0);
+}
+
+i32 renderer_upload_mesh(Mesh* mesh) {
+  i32 id = -1;
+  if (renderer.model_count < MAX_MODEL) {
+    id = renderer.model_count;
+    Model* model = &renderer.models[renderer.model_count++];
+    upload_model(mesh, model);
+  }
+  return id;
+}
+
 i32 renderer_init() {
   opengl_init();
-  upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
-  shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
+  init_state(&renderer);
+
+  view = m4d(1.0f);
+  orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
+  perspective_proj = perspective(80, 4/3.0f, 0.1f, 1000.0f);
+
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
-  orthogonal_proj = orthographic(0, 800.0f, 600.0f, 0, -1.0f, 1.0f);
+
+  shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
+  shader_compile_from_source(diffuse_vert, diffuse_frag, &diffuse_shader);
+
+  upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
   return NO_ERR;
 }
 
-void renderer_swap_buffers() {
-  platform_swap_buffers();
+void renderer_begin_frame() {
+  renderer.draw_calls = 0;
 }
 
-void renderer_clear(u8 r, u8 g, u8 b) {
+void renderer_end_frame(u8 r, u8 g, u8 b) {
+  platform_swap_buffers();
   glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -188,4 +298,11 @@ void renderer_free() {
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
   glDeleteProgram(basic_shader);
+
+  for (u32 i = 0; i < renderer.model_count; ++i) {
+    Model* model = &renderer.models[i];
+    glDeleteVertexArrays(1, &model->vao);
+    glDeleteVertexArrays(1, &model->vbo);
+    glDeleteBuffers(1, &model->ebo);
+  }
 }

@@ -12,6 +12,7 @@ all: compile run
 prepare:
 	mkdir -p ${BUILD}
 	cp -r ${RES} ${BUILD}
+	${MAKE} -C shader run
 
 compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}

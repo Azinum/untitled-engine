@@ -25,14 +25,18 @@ f32 quad_vertices[] = {
   1.0f, 0.0f, 1.0f, 0.0f,
 };
 
+void render_rect(v3 position, v3 size);
+
+void render_model(i32 model_id, v3 position, v3 size);
+
+i32 renderer_upload_mesh(Mesh* mesh);
+
 i32 renderer_init();
 
-void renderer_swap_buffers();
+void renderer_begin_frame();
 
-void renderer_clear(u8 r, u8 g, u8 b);
+void renderer_end_frame(u8 r, u8 g, u8 b);
 
 void renderer_free();
-
-void render_rect(v3 position, v3 size);
 
 #endif

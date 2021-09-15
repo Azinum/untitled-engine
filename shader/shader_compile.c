@@ -50,7 +50,8 @@ i32 main(i32 argc, char** argv) {
         fprintf(out, "\n  ");
       }
     }
-    fprintf(out, "\n};\n");
+    fprintf(out, "0x00, ");
+    fprintf(out, "};\n\n");
     fclose(fp);
   }
   return 0;

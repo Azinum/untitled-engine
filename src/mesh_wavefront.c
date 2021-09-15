@@ -41,7 +41,6 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh) {
     }
   } while (1);
 
-
 #define LINEAR_STORE 1
 
 #if LINEAR_STORE
@@ -62,7 +61,6 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh) {
   mesh->normal = (void*)((u8*)mesh->uv_index + (sizeof(u32) * mesh->uv_index_count));
   mesh->normal_index = (void*)((u8*)mesh->normal + (sizeof(v3) * mesh->normal_count));
 #else
-
   mesh->vertex = zone_malloc(sizeof(v3) * mesh->vertex_count);
   mesh->vertex_index = zone_malloc(sizeof(u32) * mesh->vertex_index_count);
 
@@ -189,6 +187,6 @@ i32 wavefront_mesh_load_from_buffer(Buffer* buffer, Mesh* mesh) {
   else {
     fprintf(stderr, "wavefront_mesh_load_from_buffer: Failed to prepare mesh\n");
   }
-
+  wavefront_sort_mesh(mesh);
   return result;
 }

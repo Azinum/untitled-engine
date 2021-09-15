@@ -7,7 +7,7 @@ NO_SSE?=0
 
 CC=gcc
 
-LIBS=
+LIBS=-lm
 
 PROG=game
 

@@ -1,5 +1,7 @@
 // math_util.c
 
+#include <math.h>
+
 inline m4 m4d(float value) {
   m4 result = {0};
 
@@ -64,6 +66,14 @@ inline m4 orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32
 
 inline m4 perspective(f32 fov, f32 aspect, f32 z_near, f32 z_far) {
   m4 result = {0};
+  float tan_theta_over2 = tanf(fov * (PI32 / 360.0f));
+
+  result.e[0][0] = 1.0f / tan_theta_over2;
+  result.e[1][1] = aspect / tan_theta_over2;
+  result.e[2][3] = -1.0f;
+  result.e[2][2] = (z_near + z_far) / (z_near - z_far);
+  result.e[3][2] = (1.0f * z_near * z_far) / (z_near - z_far);
+  result.e[3][3] = 0.0f;
 
   return result;
 }

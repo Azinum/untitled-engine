@@ -27,6 +27,7 @@ i32 game_run(Game* game) {
 
   Mesh cube_mesh;
   mesh_load("resource/mesh/cube.obj", &cube_mesh);
+  i32 cube_id = renderer_upload_mesh(&cube_mesh);
 
   while (game->running && platform_handle_events() >= 0) {
     if (key_pressed[KEY_ESCAPE]) {
@@ -35,11 +36,13 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_0]) {
       zone_print_all(stdout);
     }
-    render_rect(V3(25, 25, 0), V3(64, 64, 1));
-    render_rect(V3(125, 50, 0), V3(64, 64, 1));
+    renderer_begin_frame();
 
-    renderer_swap_buffers();
-    renderer_clear(30, 30, 30);
+    // render_rect(V3(25, 25, 0), V3(64, 64, 1));
+
+    render_model(cube_id, V3(0, 3, -10), V3(1, 1, 1));
+
+    renderer_end_frame(30, 30, 30);
   }
   mesh_unload(&cube_mesh);
   return NO_ERR;
