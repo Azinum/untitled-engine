@@ -6,9 +6,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
+#include <time.h>
 
 typedef float f32;
 typedef double f64;
+typedef int64_t i64;
+typedef uint64_t u64;
 typedef int32_t i32;
 typedef uint32_t u32;
 typedef int16_t i16;
@@ -31,6 +34,12 @@ typedef struct Buffer {
   u32 size;
 } Buffer;
 
+#ifdef _MSC_VER
+  #include <intrin.h>
+#else
+  #include <x86intrin.h>
+#endif
+
 void buffer_free(Buffer* buffer);
 
 // Same as memcpy, destination and source memory areas must not overlap
@@ -47,5 +56,7 @@ i32 string_cmp(const char* s0, const char* s1);
 i32 string_n_cmp(const char* s0, const char* s1, u32 size);
 
 i32 read_file(const char* path, Buffer* buffer);
+
+extern u64 read_tsc();
 
 #endif

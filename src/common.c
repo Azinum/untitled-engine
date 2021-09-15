@@ -103,3 +103,7 @@ done:
 	fclose(fp);
 	return result;
 }
+
+inline u64 read_tsc() {
+  return __rdtsc();
+}
