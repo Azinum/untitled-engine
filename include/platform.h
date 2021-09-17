@@ -5,20 +5,47 @@
 
 typedef const i32 Keycode;
 
-extern Keycode KEY_ESCAPE;
+#define KEYDEF extern Keycode
 
-extern Keycode KEY_0;
-extern Keycode KEY_1;
-extern Keycode KEY_2;
-extern Keycode KEY_3;
-extern Keycode KEY_4;
-extern Keycode KEY_5;
-extern Keycode KEY_6;
-extern Keycode KEY_7;
-extern Keycode KEY_8;
-extern Keycode KEY_9;
+KEYDEF KEY_ESCAPE;
+KEYDEF KEY_0;
+KEYDEF KEY_1;
+KEYDEF KEY_2;
+KEYDEF KEY_3;
+KEYDEF KEY_4;
+KEYDEF KEY_5;
+KEYDEF KEY_6;
+KEYDEF KEY_7;
+KEYDEF KEY_8;
+KEYDEF KEY_9;
+KEYDEF KEY_A;
+KEYDEF KEY_B;
+KEYDEF KEY_C;
+KEYDEF KEY_D;
+KEYDEF KEY_E;
+KEYDEF KEY_F;
+KEYDEF KEY_G;
+KEYDEF KEY_H;
+KEYDEF KEY_I;
+KEYDEF KEY_J;
+KEYDEF KEY_K;
+KEYDEF KEY_L;
+KEYDEF KEY_M;
+KEYDEF KEY_N;
+KEYDEF KEY_O;
+KEYDEF KEY_P;
+KEYDEF KEY_Q;
+KEYDEF KEY_R;
+KEYDEF KEY_S;
+KEYDEF KEY_T;
+KEYDEF KEY_U;
+KEYDEF KEY_V;
+KEYDEF KEY_W;
+KEYDEF KEY_X;
+KEYDEF KEY_Y;
+KEYDEF KEY_Z;
 
-extern Keycode KEY_LAST;
+KEYDEF KEY_LAST;
 
 extern i8 mouse_state;
 extern u8 key_down[];

@@ -12,7 +12,6 @@
 #include <GLFW/glfw3.h>
 
 Keycode KEY_ESCAPE = GLFW_KEY_ESCAPE;
-
 Keycode KEY_0 = GLFW_KEY_0;
 Keycode KEY_1 = GLFW_KEY_1;
 Keycode KEY_2 = GLFW_KEY_2;
@@ -23,6 +22,32 @@ Keycode KEY_6 = GLFW_KEY_6;
 Keycode KEY_7 = GLFW_KEY_7;
 Keycode KEY_8 = GLFW_KEY_8;
 Keycode KEY_9 = GLFW_KEY_9;
+Keycode KEY_A = GLFW_KEY_A;
+Keycode KEY_B = GLFW_KEY_B;
+Keycode KEY_C = GLFW_KEY_C;
+Keycode KEY_D = GLFW_KEY_D;
+Keycode KEY_E = GLFW_KEY_E;
+Keycode KEY_F = GLFW_KEY_F;
+Keycode KEY_G = GLFW_KEY_G;
+Keycode KEY_H = GLFW_KEY_H;
+Keycode KEY_I = GLFW_KEY_I;
+Keycode KEY_J = GLFW_KEY_J;
+Keycode KEY_K = GLFW_KEY_K;
+Keycode KEY_L = GLFW_KEY_L;
+Keycode KEY_M = GLFW_KEY_M;
+Keycode KEY_N = GLFW_KEY_N;
+Keycode KEY_O = GLFW_KEY_O;
+Keycode KEY_P = GLFW_KEY_P;
+Keycode KEY_Q = GLFW_KEY_Q;
+Keycode KEY_R = GLFW_KEY_R;
+Keycode KEY_S = GLFW_KEY_S;
+Keycode KEY_T = GLFW_KEY_T;
+Keycode KEY_U = GLFW_KEY_U;
+Keycode KEY_V = GLFW_KEY_V;
+Keycode KEY_W = GLFW_KEY_W;
+Keycode KEY_X = GLFW_KEY_X;
+Keycode KEY_Y = GLFW_KEY_Y;
+Keycode KEY_Z = GLFW_KEY_Z;
 
 Keycode KEY_LAST = GLFW_KEY_LAST;
 #define MAX_KEY GLFW_KEY_LAST
