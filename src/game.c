@@ -24,13 +24,16 @@ i32 game_state_init(Game* game) {
 }
 
 i32 game_run(Game* game) {
-
   Mesh cube_mesh;
   mesh_load("resource/mesh/cube.obj", &cube_mesh);
   i32 cube_id = renderer_upload_mesh(&cube_mesh);
 
-  v3 p = V3(0, -2, -5);
+  Image texture;
+  image_load("resource/texture/stone_ground.bmp", &texture);
+  i32 texture_id = renderer_upload_texture(&texture);
+  image_unload(&texture);
 
+  v3 p = V3(0, -2, -5);
   u64 start = 0;
   u64 delta = 0;
 
@@ -54,11 +57,15 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_S]) {
       p.z += 1;
     }
+    if (key_pressed[KEY_Z]) {
+      p.y += 1;
+    }
+    if (key_pressed[KEY_X]) {
+      p.y -= 1;
+    }
     renderer_begin_frame();
 
-    // render_rect(V3(25, 25, 0), V3(64, 64, 1));
-
-    render_model(cube_id, p, V3(1, 1, 1));
+    render_model(cube_id, texture_id, p, V3(1, 1, 1));
 
     renderer_end_frame(30, 30, 30);
     delta = read_tsc() - start;

@@ -8,7 +8,8 @@ in vec3 frag_pos;
 
 out vec4 out_color;
 
+uniform sampler2D tex;
+
 void main() {
-	vec3 color = clamp(surface_normal, 0, 1);
-	out_color = vec4(color, 1);
+	out_color = texture(tex, uv_coord);
 }

@@ -28,11 +28,16 @@ typedef struct Model {
 } Model;
 
 #define MAX_MODEL 32
+#define MAX_TEXTURE 32
 
 typedef struct Renderer {
   u32 draw_calls;
+
   Model models[MAX_MODEL];
   u32 model_count;
+
+  u32 textures[MAX_TEXTURE];
+  u32 texture_count;
 } Renderer;
 
 Renderer renderer;
@@ -79,6 +84,7 @@ i32 opengl_init() {
 i32 init_state(Renderer* r) {
   r->draw_calls = 0;
   r->model_count = 0;
+  r->texture_count = 0;
   return NO_ERR;
 }
 
@@ -220,12 +226,14 @@ void render_rect(v3 position, v3 size) {
   glUseProgram(0);
 }
 
-void render_model(i32 model_id, v3 position, v3 size) {
-  if (model_id < 0 || model_id >= renderer.model_count) {
-    return;
-  }
+void render_model(i32 model_id, i32 texture_id, v3 position, v3 size) {
+  if (model_id < 0 || model_id >= renderer.model_count) return;
+  if (texture_id < 0 || texture_id >= renderer.texture_count) return;
+
   u32 handle = diffuse_shader;
   glUseProgram(handle);
+
+  u32 texture = renderer.textures[texture_id];
 
   model = translate(position);
 
@@ -244,6 +252,9 @@ void render_model(i32 model_id, v3 position, v3 size) {
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
   DRAW_CALL(glDrawElements(GL_TRIANGLES, m->draw_count, GL_UNSIGNED_INT, 0));
 
   glDisableVertexAttribArray(0);
@@ -256,11 +267,23 @@ void render_model(i32 model_id, v3 position, v3 size) {
 }
 
 i32 renderer_upload_mesh(Mesh* mesh) {
+  assert(mesh);
   i32 id = -1;
   if (renderer.model_count < MAX_MODEL) {
     id = renderer.model_count;
     Model* model = &renderer.models[renderer.model_count++];
     upload_model(mesh, model);
+  }
+  return id;
+}
+
+i32 renderer_upload_texture(Image* texture) {
+  assert(texture);
+  i32 id = -1;
+  if (renderer.texture_count < MAX_TEXTURE) {
+    id = renderer.texture_count;
+    u32* texture_id = &renderer.textures[renderer.texture_count++];
+    upload_texture(texture, texture_id);
   }
   return id;
 }
@@ -274,6 +297,7 @@ i32 renderer_init() {
 
   image_load("resource/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
+  image_unload(&sprite_source);
 
   shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
   shader_compile_from_source(diffuse_vert, diffuse_frag, &diffuse_shader);
@@ -293,7 +317,6 @@ void renderer_end_frame(u8 r, u8 g, u8 b) {
 }
 
 void renderer_free() {
-  image_unload(&sprite_source);
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
   glDeleteProgram(basic_shader);
@@ -303,5 +326,9 @@ void renderer_free() {
     glDeleteVertexArrays(1, &model->vao);
     glDeleteVertexArrays(1, &model->vbo);
     glDeleteBuffers(1, &model->ebo);
+  }
+  for (u32 i = 0; i < renderer.texture_count; ++i) {
+    u32* texture = &renderer.textures[i];
+    glDeleteTextures(1, texture);
   }
 }

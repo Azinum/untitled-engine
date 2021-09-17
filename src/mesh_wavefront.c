@@ -9,11 +9,11 @@
 }
 
 // Prefetch mesh information (number of vertices, normals, indices e.t.c.), and load that information into the mesh itself
-static i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh);
+static i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort);
 static i32 wavefront_parse_mesh(Buffer* buffer, Mesh* mesh);
 static i32 wavefront_sort_mesh(Mesh* mesh);
 
-i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh) {
+i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort) {
   i32 result = NO_ERR;
   i32 scan_status = 0;
   char line[MAX_LINE_SIZE] = {0};
@@ -41,9 +41,14 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh) {
     }
   } while (1);
 
-#define LINEAR_STORE 1
+  if (sort) {
+    mesh->uv_count = mesh->uv_index_count;
+    mesh->normal_count = mesh->normal_index_count;
+  }
 
-#if LINEAR_STORE
+#define LINEAR_STORAGE 1
+
+#if LINEAR_STORAGE
   const u32 size = sizeof(v3) * mesh->vertex_count +
     sizeof(u32) * mesh->vertex_index_count +
     sizeof(v2) * mesh->uv_count +
@@ -142,6 +147,30 @@ done:
 i32 wavefront_sort_mesh(Mesh* mesh) {
   i32 result = NO_ERR;
 
+  u32 uv_count = mesh->uv_count;
+  v2* uv = zone_malloc(uv_count * sizeof(v2));;
+  u32 normal_count = mesh->normal_count;
+  v3* normal = zone_malloc(normal_count * sizeof(v3));
+  if (uv && normal) {
+    memory_copy(uv, mesh->uv, uv_count * sizeof(v2));
+    memory_copy(normal, mesh->normal, normal_count * sizeof(v3));
+
+    for (u32 i = 0; i < mesh->vertex_index_count; ++i) {
+      u32 index = mesh->vertex_index[i];
+      u32 uv_index = mesh->uv_index[i];
+      u32 normal_index = mesh->normal_index[i];
+
+      mesh->uv[index] = uv[uv_index];
+      mesh->normal[index] = normal[normal_index];
+    }
+
+    zone_free(uv);
+    zone_free(normal);
+  }
+  else {
+    result = ERR;
+  }
+  mesh_print(stdout, mesh);
   return result;
 }
 
@@ -173,12 +202,15 @@ i32 wavefront_mesh_write(FILE* fp, Mesh* mesh) {
 
 i32 wavefront_mesh_load_from_buffer(Buffer* buffer, Mesh* mesh) {
   i32 result = NO_ERR;
+#define SORT 1
 
-  if ((result = wavefront_prepare_mesh(buffer, mesh)) == NO_ERR) {
+  if ((result = wavefront_prepare_mesh(buffer, mesh, SORT)) == NO_ERR) {
     if ((result = wavefront_parse_mesh(buffer, mesh)) == NO_ERR) {
+#if SORT
       if ((result = wavefront_sort_mesh(mesh)) != NO_ERR) {
         fprintf(stderr, "wavefront_mesh_load_from_buffer: Failed to sort mesh data\n");
       }
+#endif
     }
     else {
       fprintf(stderr, "wavefront_mesh_load_from_buffer: Failed to parse mesh data\n");
@@ -187,6 +219,5 @@ i32 wavefront_mesh_load_from_buffer(Buffer* buffer, Mesh* mesh) {
   else {
     fprintf(stderr, "wavefront_mesh_load_from_buffer: Failed to prepare mesh\n");
   }
-  wavefront_sort_mesh(mesh);
   return result;
 }
