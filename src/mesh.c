@@ -45,12 +45,16 @@ void mesh_print(FILE* fp, Mesh* mesh) {
 }
 
 i32 mesh_write(const char* path, Mesh* mesh) {
-  i32 result = ERR;
   FILE* fp = fopen(path, "wb");
   if (!fp) {
     fprintf(stderr, "mesh_write: Failed to open file %s for writing\n", path);
     return ERR;
   }
+  return mesh_write_out(path, mesh, fp);
+}
+
+i32 mesh_write_out(const char* path, Mesh* mesh, FILE* fp) {
+  i32 result = ERR;
   char* ext = get_extension(path);
   if (!string_cmp(ext, "obj")) {
     result = wavefront_mesh_write(fp, mesh);
@@ -58,7 +62,9 @@ i32 mesh_write(const char* path, Mesh* mesh) {
   else {
     fprintf(stderr, "mesh_write: Mesh format %s is not supported for file %s\n", ext, path);
   }
-  fclose(fp);
+  if (fp != stderr && fp != stdout) {
+    fclose(fp);
+  }
   return result;
 }
 

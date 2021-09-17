@@ -220,7 +220,7 @@ void render_rect(v3 position, v3 size) {
   glBindTexture(GL_TEXTURE_2D, sprite);
 
   glBindVertexArray(quad_vao);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  DRAW_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
   glBindVertexArray(0);
 
   glUseProgram(0);

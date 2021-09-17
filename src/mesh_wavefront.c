@@ -170,7 +170,6 @@ i32 wavefront_sort_mesh(Mesh* mesh) {
   else {
     result = ERR;
   }
-  mesh_print(stdout, mesh);
   return result;
 }
 

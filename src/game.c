@@ -36,6 +36,7 @@ i32 game_run(Game* game) {
   v3 p = V3(0, -2, -5);
   u64 start = 0;
   u64 delta = 0;
+  (void)delta;
 
   while (game->running && platform_handle_events() >= 0) {
     start = read_tsc();

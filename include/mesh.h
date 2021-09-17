@@ -29,6 +29,8 @@ void mesh_print(FILE* fp, Mesh* mesh);
 
 i32 mesh_write(const char* path, Mesh* mesh);
 
+i32 mesh_write_out(const char* path, Mesh* mesh, FILE* fp);
+
 i32 mesh_load(const char* path, Mesh* mesh);
 
 void mesh_unload(Mesh* mesh);
