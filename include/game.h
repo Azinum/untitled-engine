@@ -7,6 +7,7 @@
 #include "config.h"
 #include "memory.h"
 #include "zone.h"
+#include "pack.h"
 #include "math_util.h"
 #include "image.h"
 #include "bmp.h"

@@ -1,6 +1,6 @@
 // zone.c
 // Basic zone memory allocator
-// TODO(lucas): Incorporate some type of temporary storage
+// TODO(lucas): Make this thread safe when we actually have some threaded code
 
 #define ALIGNMENT 16
 #define ALIGN(n) ((n % ALIGNMENT) ? (n + ALIGNMENT - (n % ALIGNMENT)) : n)

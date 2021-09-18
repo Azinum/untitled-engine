@@ -6,6 +6,7 @@
 #include "config.c"
 #include "memory.c"
 #include "zone.c"
+#include "pack.c"
 #include "math_util.c"
 #include "image.c"
 #include "bmp.c"

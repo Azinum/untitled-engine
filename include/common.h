@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <pthread.h>
 
 typedef float f32;
 typedef double f64;
@@ -54,6 +55,8 @@ char* get_extension(const char* path);
 i32 string_cmp(const char* s0, const char* s1);
 
 i32 string_n_cmp(const char* s0, const char* s1, u32 size);
+
+i32 string_len(const char* s);
 
 i32 read_file(const char* path, Buffer* buffer);
 

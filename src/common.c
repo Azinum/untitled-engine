@@ -71,6 +71,18 @@ i32 string_n_cmp(const char* s0, const char* s1, u32 size) {
   return result;
 }
 
+i32 string_len(const char* s) {
+  if (!s) {
+    return 0;
+  }
+  i32 length = 0;
+  char* iter = (char*)s;
+  while (*iter++ != '\0') {
+    ++length;
+  }
+  return length;
+}
+
 i32 read_file(const char* path, Buffer* buffer) {
 	i32 result = NO_ERR;
 	u32 num_bytes_read = 0;
