@@ -23,8 +23,12 @@ typedef uint8_t u8;
 #define ARR_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
 #define MAX_PATH_SIZE 512
 
-#define NO_ERR (0)
-#define ERR (-1)
+enum Error_code {
+  ERR = -1,
+  NO_ERR = 0,
+
+  MAX_ERR_CODE,
+};
 
 #define KB(n) (n * 1024)
 #define MB(n) (KB(n * 1024))

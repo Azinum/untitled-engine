@@ -52,12 +52,12 @@ i32 parse_args(Parse_arg* args, i32 num_args, i32 argc, char** argv) {
       }
       if (*arg == 'h' && !long_flag) {
         args_print_help(stdout, args, num_args, argc, argv);
-        return NO_ERR;
+        return ERR_HELP;
       }
       if (long_flag) {
         if (!string_cmp(arg, "help")) {
           args_print_help(stdout, args, num_args, argc, argv);
-          return NO_ERR;
+          return ERR_HELP;
         }
       }
       Parse_arg* parse_arg = NULL;

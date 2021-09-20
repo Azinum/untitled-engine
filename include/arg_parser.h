@@ -19,6 +19,8 @@ static const char* arg_type_desc[MAX_ARG_TYPE] = {
   "buffer",
 };
 
+#define ERR_HELP MAX_ERR_CODE+1
+
 typedef struct Parse_arg {
   char flag;  // Single char to identify the argument flag
   const char* long_flag; // Long string to identify the argument flag
