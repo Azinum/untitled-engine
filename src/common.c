@@ -83,6 +83,18 @@ i32 string_len(const char* s) {
   return length;
 }
 
+i32 string_copy(char* restrict dest, const char* restrict source) {
+  char* it0 = dest;
+  char* it1 = (char*)source;
+  if (!it0 || !it1) {
+    return 0;
+  }
+  while (*it0 && *it1) {
+    *it0++ = *it1++;
+  }
+  return 0;
+}
+
 i32 read_file(const char* path, Buffer* buffer) {
 	i32 result = NO_ERR;
 	u32 num_bytes_read = 0;

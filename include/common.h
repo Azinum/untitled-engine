@@ -58,6 +58,8 @@ i32 string_n_cmp(const char* s0, const char* s1, u32 size);
 
 i32 string_len(const char* s);
 
+i32 string_copy(char* restrict dest, const char* restrict source);
+
 i32 read_file(const char* path, Buffer* buffer);
 
 extern u64 read_tsc();

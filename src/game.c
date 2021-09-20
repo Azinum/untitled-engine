@@ -3,6 +3,7 @@
 #include "game.h"
 
 #include "common.c"
+#include "arg_parser.c"
 #include "config.c"
 #include "memory.c"
 #include "zone.c"

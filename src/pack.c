@@ -1,5 +1,5 @@
 // pack.c
-// Pack multiple files into a single file
+// Hierarchical file pack/unpacker
 //
 
 #include <unistd.h>
