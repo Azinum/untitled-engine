@@ -56,6 +56,10 @@ void memory_set(void* restrict dest, const u8 value, const u32 size);
 
 char* get_extension(const char* path);
 
+u32 hash(char* s, u32 length);
+
+u32 string_hash(char* s);
+
 i32 string_cmp(const char* s0, const char* s1);
 
 i32 string_n_cmp(const char* s0, const char* s1, u32 size);
@@ -63,6 +67,10 @@ i32 string_n_cmp(const char* s0, const char* s1, u32 size);
 i32 string_len(const char* s);
 
 i32 string_copy(char* restrict dest, const char* restrict source);
+
+u32 string_copy_filename_in_path(char* restrict dest, const char* restrict path, u8* end);
+
+u32 string_filename_in_path(const char* path, u8* end);
 
 i32 read_file(const char* path, Buffer* buffer);
 

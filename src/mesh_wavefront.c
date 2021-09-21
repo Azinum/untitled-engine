@@ -45,10 +45,6 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort) {
     mesh->uv_count = mesh->uv_index_count;
     mesh->normal_count = mesh->normal_index_count;
   }
-
-#define LINEAR_STORAGE 1
-
-#if LINEAR_STORAGE
   const u32 size = sizeof(v3) * mesh->vertex_count +
     sizeof(u32) * mesh->vertex_index_count +
     sizeof(v2) * mesh->uv_count +
@@ -65,16 +61,7 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort) {
 
   mesh->normal = (void*)((u8*)mesh->uv_index + (sizeof(u32) * mesh->uv_index_count));
   mesh->normal_index = (void*)((u8*)mesh->normal + (sizeof(v3) * mesh->normal_count));
-#else
-  mesh->vertex = zone_malloc(sizeof(v3) * mesh->vertex_count);
-  mesh->vertex_index = zone_malloc(sizeof(u32) * mesh->vertex_index_count);
 
-  mesh->uv = zone_malloc(sizeof(v2) * mesh->uv_count);
-  mesh->uv_index = zone_malloc(sizeof(u32) * mesh->uv_index_count);
-
-  mesh->normal = zone_malloc(sizeof(v3) * mesh->normal_count);
-  mesh->normal_index = zone_malloc(sizeof(u32) * mesh->normal_index_count);
-#endif
   return result;
 }
 

@@ -1,6 +1,5 @@
-// zone->c
+// zone.c
 // Basic zone memory allocator
-// TODO(lucas): Make this thread safe when we actually have some threaded code
 
 #define ALIGNMENT 16
 #define ALIGN(n) ((n % ALIGNMENT) ? (n + ALIGNMENT - (n % ALIGNMENT)) : n)
@@ -252,7 +251,7 @@ size_t zone_total_alloc() {
 }
 
 void zone_dump(const char* path) {
-  FILE* fp = fopen(path, "w");
+  FILE* fp = fopen(path, "wb");
   if (!fp) {
     return;
   }

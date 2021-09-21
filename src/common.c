@@ -36,6 +36,26 @@ char* get_extension(const char* path) {
   return iter;
 }
 
+u32 hash(char* s, u32 length) {
+  u32 result = 5381;
+  if (!s) {
+    return result;
+  }
+
+  for (u32 i = 0; i < length; ++i) {
+    char ch = s[i];
+    if (ch == '\0') {
+      break;
+    }
+    result = ((result << 5) + result) + ch;
+  }
+  return result;
+}
+
+u32 string_hash(char* s) {
+  return hash(s, string_len(s));
+}
+
 i32 string_cmp(const char* s0, const char* s1) {
   return string_n_cmp(s0, s1, UINT32_MAX);
 }
@@ -93,6 +113,49 @@ i32 string_copy(char* restrict dest, const char* restrict source) {
     *it0++ = *it1++;
   }
   return 0;
+}
+
+u32 string_copy_filename_in_path(char* restrict dest, const char* restrict path, u8* end) {
+  u32 length = 0;
+  char* it0 = dest;
+  char* it1 = (char*)path;
+
+  do {
+    ++length;
+    if (*it1 == '\0') {
+      if (end) {
+        *end = 1;
+      }
+      break;
+    }
+    else if (*it1 == '/') {
+      break;
+    }
+    *it0++ = *it1++;
+  } while (1);
+
+  *it0 = '\0';
+  return length;
+}
+
+u32 string_filename_in_path(const char* path, u8* end) {
+  u32 length = 0;
+  char* iter = (char*)path;
+
+  do {
+    ++length;
+    if (*iter == '\0') {
+      if (end) {
+        *end = 1;
+      }
+      break;
+    }
+    else if (*iter == '/') {
+      break;
+    }
+    ++iter;
+  } while (1);
+  return length;
 }
 
 i32 read_file(const char* path, Buffer* buffer) {

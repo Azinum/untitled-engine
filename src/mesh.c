@@ -74,7 +74,7 @@ i32 mesh_load(const char* path, Mesh* mesh) {
   mesh_init(mesh);
   Buffer mesh_data_buffer = {0};
 
-  if ((result = read_file(path, &mesh_data_buffer)) != NO_ERR) {
+  if ((result = read_pack_file(path, PACK_FILE, &mesh_data_buffer)) != NO_ERR) {
     return result;
   }
 
