@@ -295,7 +295,7 @@ i32 renderer_init() {
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
 
-  image_load("resource/sprite/spritesheet.bmp", &sprite_source);
+  image_load("data/sprite/spritesheet.bmp", &sprite_source);
   upload_texture(&sprite_source, &sprite);
   image_unload(&sprite_source);
 

@@ -15,8 +15,8 @@ typedef struct Game_args {
 i32 main(i32 argc, char** argv) {
   Game_args game_args = {
     .pack = 0,
-    .pack_file = "build/resource.pack",
-    .pack_path = "resource",
+    .pack_file = "build/data.pack",
+    .pack_path = "data",
   };
   Parse_arg args[] = {
     {'p', "pack", "pack files", ARG_INT, 0, &game_args.pack},
@@ -27,7 +27,7 @@ i32 main(i32 argc, char** argv) {
   i32 result = parse_args(args, ARR_SIZE(args), argc, argv);
   if (result == NO_ERR) {
     if (game_args.pack) {
-      zone_memory_init(MB(10));
+      zone_memory_init(MB(10), MB(2));
       pack_dir(game_args.pack_file, game_args.pack_path);
       zone_memory_free();
     }

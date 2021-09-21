@@ -27,11 +27,11 @@ i32 game_state_init(Game* game) {
 
 i32 game_run(Game* game) {
   Mesh cube_mesh;
-  mesh_load("resource/mesh/cube.obj", &cube_mesh);
+  mesh_load("data/mesh/cube.obj", &cube_mesh);
   i32 cube_id = renderer_upload_mesh(&cube_mesh);
 
   Image texture;
-  image_load("resource/texture/stone_ground.bmp", &texture);
+  image_load("data/texture/stone_ground.bmp", &texture);
   i32 texture_id = renderer_upload_texture(&texture);
   image_unload(&texture);
 
@@ -78,7 +78,7 @@ i32 game_run(Game* game) {
 }
 
 i32 game_start(i32 argc, char** argv) {
-  zone_memory_init(ZONE_MEMORY);
+  zone_memory_init(ZONE_MEMORY, ZONE_TEMP_MEMORY);
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);

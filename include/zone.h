@@ -3,21 +3,25 @@
 #ifndef _ZONE_H
 #define _ZONE_H
 
-i32 zone_memory_init(u32 size);
+i32 zone_memory_init(const size_t size, const size_t temp_size);
 
 void zone_print_all(FILE* fp);
 
-void* zone_malloc(u32 size);
+void* zone_malloc(size_t size);
 
-void* zone_calloc(u32 count, u32 size);
+void* zone_calloc(size_t count, size_t size);
 
-void* zone_realloc(void* p, u32 new_size);
+void* zone_realloc(void* p, size_t new_size);
 
-u32 zone_free(void* p);
+size_t zone_free(void* p);
 
-u32 zone_try_free(void* p);
+size_t zone_try_free(void* p);
 
-u32 zone_total_alloc();
+void* zone_temp_malloc(size_t size);
+
+size_t zone_temp_free(void* p);
+
+size_t zone_total_alloc();
 
 void zone_dump(const char* path);
 

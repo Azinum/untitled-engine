@@ -17,7 +17,7 @@ SRC=src/main.c
 
 INC=include
 
-RES=resource
+RES=data
 
 FLAGS=-o ${BUILD}/${PROG} -I${INC} -Wall -pedantic
 

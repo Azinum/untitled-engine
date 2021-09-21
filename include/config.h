@@ -4,7 +4,8 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#define ZONE_MEMORY MB(10)
+#define ZONE_MEMORY MB(16)
+#define ZONE_TEMP_MEMORY 0.2 * ZONE_MEMORY
 
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600

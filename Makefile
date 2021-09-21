@@ -18,6 +18,7 @@ compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
 
 run:
+	./${BUILD}/${PROG} -p
 	./${BUILD}/${PROG}
 
 clean:
