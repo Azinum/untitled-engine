@@ -9,6 +9,15 @@ void buffer_free(Buffer* buffer) {
   }
 }
 
+u32 buffer_iterate(void* restrict dest, Buffer* source, u32 size, u32* iter) {
+  assert("buffer_iterate: write outside buffer memory area" && (*iter + size) <= source->size);
+  memory_copy(dest, &source->data[*iter], size);
+
+  *iter += size;
+
+  return size;
+}
+
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size) {
   u8* d = (u8*)dest;
   u8* s = (u8*)source;
@@ -50,6 +59,10 @@ u32 hash(char* s, u32 length) {
     result = ((result << 5) + result) + ch;
   }
   return result;
+}
+
+u32 hashdata(u8* data, u32 length) {
+  return hash((char*)data, length);
 }
 
 u32 string_hash(char* s) {
@@ -109,7 +122,7 @@ i32 string_copy(char* restrict dest, const char* restrict source) {
   if (!it0 || !it1) {
     return 0;
   }
-  while (*it0 && *it1) {
+  while (*it1 != '\0') {
     *it0++ = *it1++;
   }
   return 0;

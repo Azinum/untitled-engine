@@ -17,8 +17,6 @@ u32 quad_vao = 0,
   quad_vbo = 0;
 u32 basic_shader = 0,
   diffuse_shader = 0;
-Image sprite_source;
-u32 sprite = 0;
 
 typedef struct Model {
   u32 draw_count;
@@ -200,9 +198,13 @@ void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, voi
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void render_rect(v3 position, v3 size) {
+void render_texture(i32 texture_id, v3 position, v3 size) {
+  if (texture_id < 0 || texture_id >= renderer.texture_count) return;
+
   u32 handle = basic_shader;
   glUseProgram(handle);
+
+  u32 texture = renderer.textures[texture_id];
 
   model = translate(position);
   model = m4_multiply(model, scale(size));
@@ -217,7 +219,7 @@ void render_rect(v3 position, v3 size) {
   glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, sprite);
+  glBindTexture(GL_TEXTURE_2D, texture);
 
   glBindVertexArray(quad_vao);
   DRAW_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
@@ -294,10 +296,6 @@ i32 renderer_init() {
 
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
-
-  image_load("data/sprite/spritesheet.bmp", &sprite_source);
-  upload_texture(&sprite_source, &sprite);
-  image_unload(&sprite_source);
 
   shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
   shader_compile_from_source(diffuse_vert, diffuse_frag, &diffuse_shader);

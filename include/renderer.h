@@ -27,7 +27,7 @@ f32 quad_vertices[] = {
 
 void renderer_framebuffer_cb(i32 window_width, i32 window_height);
 
-void render_rect(v3 position, v3 size);
+void render_texture(i32 texture_id, v3 position, v3 size);
 
 void render_model(i32 model_id, i32 texture_id, v3 position, v3 size);
 

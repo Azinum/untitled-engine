@@ -36,7 +36,11 @@ Color_bgra bgr_to_rgb_internal(Color_bgra* color);
 
 i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image);
 
+i32 image_load_from_buffer(const char* ext, Image* image, Buffer* buffer);
+
 i32 image_load(const char* path, Image* image);
+
+i32 image_load_from_pack(const char* path, const char* pack_file, Image* image);
 
 void image_unload(Image* image);
 

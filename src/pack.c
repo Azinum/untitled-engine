@@ -162,7 +162,7 @@ Dir_entry pack(Pack_state* p, char* path, char* file_name, DIR* dir) {
     for (u32 i = 0; i < dir_entries.count; ++i) {
       file_header.size += pack_write(p, &dir_entries.data[i], sizeof(Dir_entry));
     }
-    zone_try_free(dir_entries.data);
+    zone_free(dir_entries.data);
   }
   else {
     Buffer file_contents = {0};
@@ -340,7 +340,6 @@ i32 read_pack_file(const char* path, const char* pack_file, Buffer* buffer) {
 
   Pack_state pack_state = {0};
   if ((result = pack_state_init(&pack_state, pack_file)) == NO_ERR) {
-
     Pack_header header = {0};
     pack_read(&pack_state, &header, sizeof(Pack_header));
     if (header.magic == PACK_HEADER_MAGIC) {
@@ -350,11 +349,14 @@ i32 read_pack_file(const char* path, const char* pack_file, Buffer* buffer) {
         if (buffer->data) {
           pack_read_at(&pack_state, &buffer->data[0], file_header.size, file_header.location);
           buffer->size = file_header.size;
-          return NO_ERR;
+        }
+        else {
+          result = ERR;
         }
       }
       else {
         fprintf(stderr, "read_pack_file: File '%s' does not exist in pack '%s'\n", path, pack_file);
+        result = ERR;
       }
     }
     else {

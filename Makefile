@@ -7,7 +7,7 @@ endif
 include config.mk
 include common.mk
 
-all: compile run
+all: compile pack run
 
 prepare:
 	mkdir -p ${BUILD}
@@ -17,8 +17,10 @@ prepare:
 compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
 
-run:
+pack:
 	./${BUILD}/${PROG} -p
+
+run:
 	./${BUILD}/${PROG}
 
 clean:

@@ -29,15 +29,36 @@ i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
   return NO_ERR;
 }
 
-i32 image_load(const char* path, Image* image) {
-  char* ext = get_extension(path);
+i32 image_load_from_buffer(const char* ext, Image* image, Buffer* buffer) {
+  i32 result = ERR;
+
   if (!string_cmp(ext, "bmp")) {
-    return bmp_load(path, image);
+    result = bmp_load(image, buffer);
   }
   else {
-    fprintf(stderr, "Image format %s not supported for file %s\n", ext, path);
+    fprintf(stderr, "Image format %s not supported for file\n", ext);
   }
-  return NO_ERR;
+  return result;
+}
+
+i32 image_load(const char* path, Image* image) {
+  i32 result = ERR;
+  Buffer buffer = {0};
+  if ((result = read_file(path, &buffer)) == NO_ERR) {
+    result = image_load_from_buffer(get_extension(path), image, &buffer);
+    buffer_free(&buffer);
+  }
+  return result;
+}
+
+i32 image_load_from_pack(const char* path, const char* pack_file, Image* image) {
+  i32 result = ERR;
+  Buffer buffer = {0};
+  if ((result = read_pack_file(path, pack_file, &buffer)) == NO_ERR) {
+    result = image_load_from_buffer(get_extension(path), image, &buffer);
+    buffer_free(&buffer);
+  }
+  return result;
 }
 
 void image_unload(Image* image) {

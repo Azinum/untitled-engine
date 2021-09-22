@@ -4,7 +4,7 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#define ZONE_MEMORY MB(16)
+#define ZONE_MEMORY MB(32)
 #define ZONE_TEMP_MEMORY 0.2 * ZONE_MEMORY
 
 #define PACK_FILE "build/data.pack"

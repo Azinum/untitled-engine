@@ -33,6 +33,8 @@ const char* block_tag_info[MAX_BLOCK_TAG] = {
   "free",
 };
 
+#define BLOCK_NAME_SIZE 16
+
 typedef struct Block_header {
   u8 tag;
   size_t size;
@@ -56,12 +58,13 @@ i32 zone_init(Zone* z, size_t size) {
     return ERR;
   }
   z->size = size;
+  z->total_alloc = 0;
 
   Block_header zone_block = (Block_header) {
     .tag = TAG_BLOCK_FREE,
-    .size = size - sizeof(Block_header),
+    .size = size,
   };
-  assert(zone_block.size < z->size);
+  assert(zone_block.size <= z->size);
   zone_write(z, 0, &zone_block, sizeof(Block_header));
   return NO_ERR;
 }
@@ -82,44 +85,47 @@ i32 zone_fetch_block_header(Zone* z, void* p, Block_header* header) {
 
 void* zone_allocate_block(Zone* z, size_t size, Block_tag block_tag) {
   void* data = NULL;
+  size += sizeof(Block_header);
+
+  if (z->total_alloc + size >= z->size) {
+    goto done;
+  }
 
   size_t location = 0;
   size_t size_total = 0;
-  u8 byte = 0;
+  Block_header* header = NULL;
   for (size_t index = 0; index < z->size;) {
 begin:
-    byte = z->data[index];
-    switch (byte) {
+    header = (Block_header*)&z->data[index];
+    switch (header->tag) {
       case TAG_BLOCK_USED: {
-        Block_header* header = (Block_header*)&zone->data[index];
-        index += header->size + sizeof(Block_header);
+        index += header->size;
         size_total = 0;
         location = index;
         goto begin;
       }
       case TAG_BLOCK_FREE: {
-        Block_header* header = (Block_header*)&z->data[index];
-        size_total += header->size + sizeof(Block_header);
-        index += header->size + sizeof(Block_header);
+        size_total += header->size;
+        index += header->size;
         break;
       }
       default: {
-        assert(0);  // We should not be able to get here
-        break;
+        assert("something went very wrong" && 0);
+        return NULL;
       }
     }
     if (size_total >= size) {
       Block_header* header = (Block_header*)&z->data[location];
       header->tag = block_tag;
       header->size = size;
-      data = &z->data[location + sizeof(Block_header)];
-      size_t diff = size_total - (size + sizeof(Block_header));
+      data = (u8*)header + sizeof(Block_header);
+      size_t diff = size_total - header->size;
       if (diff > 0) {
         Block_header next = (Block_header) {
           .tag = TAG_BLOCK_FREE,
-          .size = diff - sizeof(Block_header),
+          .size = diff,
         };
-        size_t next_location = location + header->size + sizeof(Block_header);
+        size_t next_location = location + header->size;
         zone_write(z, next_location, &next, sizeof(Block_header));
       }
       goto done;
@@ -143,36 +149,40 @@ i32 zone_memory_init(size_t size, size_t temp_size) {
 }
 
 void zone_print_all(FILE* fp) {
-  u8 byte = 0;
   Block_header* header = NULL;
 
   fprintf(fp, "Zone memory: %lu/%lu bytes (%.3g%%)\n", zone->total_alloc, zone->size, ((f32)zone->total_alloc / zone->size * 100.0f));
 
   for (size_t index = 0; index < zone->size;) {
-    byte = zone->data[index];
-    switch (byte) {
-      case TAG_BLOCK_FREE: {
-        header = (Block_header*)&zone->data[index];
-        fprintf(fp, "  block (%s) at %9lu, %p, size: %9lu bytes, %10.4g MB\n", block_tag_info[header->tag], index, (void*)header, header->size, (f32)header->size / MB(1));
-        index += header->size + sizeof(Block_header);
-        break;
-      }
-      case TAG_BLOCK_USED: {
-        header = (Block_header*)&zone->data[index];
-        fprintf(fp, "  block (%s) at %9lu, %p, size: %9lu bytes, %10.4g MB\n", block_tag_info[header->tag], index, (void*)header, header->size, (f32)header->size / MB(1));
-        index += header->size + sizeof(Block_header);
-        break;
-      }
-      default:
-        ++index;
-        break;
+    header = (Block_header*)&zone->data[index];
+    fprintf(fp, "  block (%s) at %9lu to %9lu, %p, size: %9lu bytes, %10.4g MB\n", block_tag_info[header->tag], index, index + header->size, (void*)header, header->size, (f32)header->size / MB(1));
+    index += header->size;
+  }
+}
+
+i32 zone_validate() {
+  size_t size_total = 0;
+  Zone* z = zone;
+  if (!z) {
+    return 0;
+  }
+  for (size_t index = 0; index < z->size;) {
+    Block_header* header = (Block_header*)&z->data[index];
+    size_total += header->size;
+    index += header->size;
+    if (header->tag != TAG_BLOCK_USED && header->tag != TAG_BLOCK_FREE) {
+      fprintf(stderr, "Bad header tag at: %p, %u, size: %lu\n", (void*)header, header->tag, header->size);
+      return 0;
     }
   }
+  return size_total == z->size;
 }
 
 void* zone_malloc(size_t size) {
   void* data = NULL;
   size = ALIGN(size);
+
+  assert(size != 0);
 
   data = zone_allocate_block(zone, size, TAG_BLOCK_USED);
 
@@ -194,7 +204,7 @@ void* zone_realloc(void* p, size_t new_size) {
     Block_header p_block = {0};
     zone_fetch_block_header(zone, p, &p_block);
     assert(p_block.tag == TAG_BLOCK_USED);
-    memory_copy(p_new, p, p_block.size);
+    memory_copy(p_new, p, p_block.size - sizeof(Block_header));
     zone_free(p);
   }
   return p_new;
@@ -202,26 +212,19 @@ void* zone_realloc(void* p, size_t new_size) {
 
 size_t zone_free(void* p) {
   if (!p) {
-    fprintf(stderr, "zone_free: Tried to free a NULL pointer\n");
     return 0;
   }
-  size_t location = (u8*)p - zone->data - sizeof(Block_header);
+
+  size_t location = ((u8*)p - sizeof(Block_header)) - &zone->data[0];
   Block_header* header = (Block_header*)&zone->data[location];
-  if (header->tag != TAG_BLOCK_USED || header->size > zone->size) {  // Sanity check
+
+  if (header->tag != TAG_BLOCK_USED || header->size >= zone->size) {  // Sanity check
     fprintf(stderr, "zone_free: Failed to free zone block; corrupted block header (at %lu, %p)\n", location, (void*)header);
     return 0;
   }
   header->tag = TAG_BLOCK_FREE;
-  memory_zero(p, header->size);
   zone->total_alloc -= header->size;
   return header->size;
-}
-
-size_t zone_try_free(void* p) {
-  if (p) {
-    return zone_free(p);
-  }
-  return 0;
 }
 
 void* zone_temp_malloc(size_t size) {

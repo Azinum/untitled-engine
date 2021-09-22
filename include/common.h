@@ -47,6 +47,8 @@ typedef struct Buffer {
 
 void buffer_free(Buffer* buffer);
 
+u32 buffer_iterate(void* restrict dest, Buffer* source, u32 size, u32* iter);
+
 // Same as memcpy, destination and source memory areas must not overlap
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size);
 
@@ -57,6 +59,8 @@ void memory_set(void* restrict dest, const u8 value, const u32 size);
 char* get_extension(const char* path);
 
 u32 hash(char* s, u32 length);
+
+u32 hashdata(u8* data, u32 length);
 
 u32 string_hash(char* s);
 

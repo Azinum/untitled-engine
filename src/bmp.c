@@ -27,24 +27,17 @@ typedef struct BMP_header {
   u32 blue_mask;
 } __attribute__((packed)) BMP_header;
 
-static i32 iterate_file(void* data, i32 size, FILE* fp);
-
-i32 iterate_file(void* data, i32 size, FILE* fp) {
-  return fread(data, size, 1, fp) == size;
-}
-
 // NOTE(lucas): Supports only uncompressed 24-bit color depth
-i32 bmp_load(const char* path, Image* image) {
+i32 bmp_load(Image* image, Buffer* buffer) {
   i32 result = NO_ERR;
-  FILE* fp = fopen(path, "rb");
-  if (!fp) {
-    return ERR;
-  }
+
   BMP_file_header file_header = {0};
   BMP_header header = {0};
 
-  iterate_file(&file_header, sizeof(file_header), fp);
-  iterate_file(&header, sizeof(header), fp);
+  u32 iter = 0;
+
+  buffer_iterate(&file_header, buffer, sizeof(BMP_file_header), &iter);
+  buffer_iterate(&header, buffer, sizeof(BMP_header), &iter);
 
   if (file_header.file_type == bitmap_file_type) {
     if (file_header.reserved1 == 0 && file_header.reserved2 == 0) {
@@ -53,12 +46,12 @@ i32 bmp_load(const char* path, Image* image) {
         u32 width = header.width;
         u32 height = header.height;
         if (image_init(width, height, 4, image) == NO_ERR) {
-          fseek(fp, file_header.offset, SEEK_SET);  // Seek to the location of the pixel data
+          iter = file_header.offset;  // 'Seek' to the location of the pixel data
           Color_bgra* start_pixel = (Color_bgra*)&image->data[0];
           for (i32 y = height - 1; y >= 0; --y) { // Reading row by row, from bottom to top
             for (i32 x = 0; x < width; ++x) {
               u32 location = width * y + x;
-              iterate_file(start_pixel + location, bytes_per_pixel, fp);
+              buffer_iterate(start_pixel + location, buffer, bytes_per_pixel, &iter);
               Color_bgra* pixel = start_pixel + location;
               *pixel = bgr_to_rgb_internal(pixel);
             }
@@ -84,6 +77,5 @@ i32 bmp_load(const char* path, Image* image) {
   }
 
 done:
-  fclose(fp);
   return result;
 }
