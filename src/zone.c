@@ -151,8 +151,9 @@ i32 zone_memory_init(size_t size, size_t temp_size) {
 void zone_print_all(FILE* fp) {
   Block_header* header = NULL;
 
-  fprintf(fp, "Zone memory: %lu/%lu bytes (%.3g%%)\n", zone->total_alloc, zone->size, ((f32)zone->total_alloc / zone->size * 100.0f));
+  size_t which_zone = zone - &zones[0];
 
+  fprintf(fp, "Zone memory (%lu): %lu/%lu bytes, %lu/%lu MB (%.3g%%)\n", which_zone, zone->total_alloc, zone->size, zone->total_alloc / MB(1), zone->size / MB(1), ((f32)zone->total_alloc / zone->size * 100.0f));
   for (size_t index = 0; index < zone->size;) {
     header = (Block_header*)&zone->data[index];
     fprintf(fp, "  block (%s) at %9lu to %9lu, %p, size: %9lu bytes, %10.4g MB\n", block_tag_info[header->tag], index, index + header->size, (void*)header, header->size, (f32)header->size / MB(1));
