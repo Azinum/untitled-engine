@@ -16,7 +16,8 @@
 u32 quad_vao = 0,
   quad_vbo = 0;
 u32 basic_shader = 0,
-  diffuse_shader = 0;
+  diffuse_shader = 0,
+  diffuse2_shader = 0;
 
 typedef struct Model {
   u32 draw_count;
@@ -232,7 +233,7 @@ void render_model(i32 model_id, i32 texture_id, v3 position, v3 size) {
   if (model_id < 0 || model_id >= renderer.model_count) return;
   if (texture_id < 0 || texture_id >= renderer.texture_count) return;
 
-  u32 handle = diffuse_shader;
+  u32 handle = diffuse2_shader;
   glUseProgram(handle);
 
   u32 texture = renderer.textures[texture_id];
@@ -299,6 +300,7 @@ i32 renderer_init() {
 
   shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
   shader_compile_from_source(diffuse_vert, diffuse_frag, &diffuse_shader);
+  shader_compile_from_source(diffuse2_vert, diffuse2_frag, &diffuse2_shader);
 
   upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
   return NO_ERR;
@@ -318,6 +320,8 @@ void renderer_free() {
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
   glDeleteProgram(basic_shader);
+  glDeleteProgram(diffuse_shader);
+  glDeleteProgram(diffuse2_shader);
 
   for (u32 i = 0; i < renderer.model_count; ++i) {
     Model* model = &renderer.models[i];

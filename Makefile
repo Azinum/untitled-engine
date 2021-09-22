@@ -11,7 +11,6 @@ all: compile pack run
 
 prepare:
 	mkdir -p ${BUILD}
-	cp -r ${RES} ${BUILD}
 	${MAKE} -C shader run
 
 compile: prepare

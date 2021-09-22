@@ -13,6 +13,7 @@
 
 const char* filter_ext_files[] = {
   "xcf",
+  "mtl",
 };
 
 const char* filter_files[] = {

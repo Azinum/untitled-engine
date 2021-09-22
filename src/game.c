@@ -19,6 +19,19 @@
 static i32 game_state_init(Game* game);
 static i32 game_run(Game* game);
 
+#define MAP_W 8
+#define MAP_H 8
+u8 map[MAP_H][MAP_W] = {
+  {1, 1, 1, 1, 1, 1, 1, 1},
+  {0, 0, 1, 0, 0, 0, 0, 0},
+  {0, 0, 1, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 0, 0, 0, 0, 0, 1, 0},
+  {1, 1, 0, 0, 0, 0, 1, 0},
+  {1, 0, 0, 0, 0, 1, 1, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+};
+
 i32 game_state_init(Game* game) {
   game->running = 1;
   game->entity_count = 0;
@@ -48,7 +61,7 @@ i32 game_run(Game* game) {
   cube_id = renderer_upload_mesh(&mesh);
   mesh_unload(&mesh);
 
-  v3 p = V3(0, 0, -2);
+  v3 p = V3(MAP_W/2, 0, MAP_H);
   u64 start = 0;
   u64 delta = 0;
   (void)delta;
@@ -82,7 +95,22 @@ i32 game_run(Game* game) {
     renderer_begin_frame();
 
     render_texture(sheet_id, V3(25, 25, 0), V3(64, 64, 1));
-    render_model(cube_id, texture_id, p, V3(1, 1, 1));
+
+    for (i32 y = 0; y < MAP_H; ++y) {
+      for (i32 x = 0; x < MAP_W; ++x) {
+        v3 pos = V3(
+          x - p.x,
+          0,
+          y - p.z
+        );
+        u8 value = map[y][x];
+        if (value) {
+          render_model(cube_id, texture_id, pos, V3(1, 1, 1));
+        }
+        render_model(cube_id, texture_id, V3(pos.x, pos.y + 1, pos.z), V3(1, 1, 1));
+        render_model(cube_id, texture_id, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
+      }
+    }
 
     renderer_end_frame(30, 30, 30);
     delta = read_tsc() - start;
