@@ -23,6 +23,14 @@ typedef uint8_t u8;
 #define ARR_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
 #define MAX_PATH_SIZE 512
 
+#define safe_scanf(ScanStatus, Iterator, Format, ...) { \
+  i32 num_bytes_read = 0; \
+  ScanStatus = sscanf(Iterator, Format "%n", __VA_ARGS__, &num_bytes_read); \
+  Iterator += num_bytes_read; \
+}
+
+#define MAX_LINE_SIZE 256
+
 enum Error_code {
   ERR = -1,
   NO_ERR = 0,
@@ -58,9 +66,7 @@ void memory_set(void* restrict dest, const u8 value, const u32 size);
 
 char* get_extension(const char* path);
 
-u32 hash(char* s, u32 length);
-
-u32 hashdata(u8* data, u32 length);
+u32 hash(u8* s, u32 length);
 
 u32 string_hash(char* s);
 

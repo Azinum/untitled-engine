@@ -43,7 +43,7 @@ Renderer renderer;
 
 static i32 opengl_init();
 static i32 init_state(Renderer* r);
-static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out);
+static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, const char* attrib_locations, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
 static void upload_texture(Image* texture, u32* texture_id);
 static void upload_model(Mesh* mesh, Model* model);
@@ -89,7 +89,7 @@ i32 init_state(Renderer* r) {
 
 #define SHADER_ERROR_BUFFER_SIZE 512
 
-i32 shader_compile_from_source(const char* vert_source, const char* frag_source, u32* program_out) {
+i32 shader_compile_from_source(const char* vert_source, const char* frag_source, const char* attrib_locations, u32* program_out) {
   i32 result = NO_ERR;
   i32 compile_report = 0;
   u32 program = 0;
@@ -123,6 +123,30 @@ i32 shader_compile_from_source(const char* vert_source, const char* frag_source,
   program = glCreateProgram();
   glAttachShader(program, vert_shader);
   glAttachShader(program, frag_shader);
+
+  // Bind attribute locations before linking
+  if (attrib_locations) {
+    char line[MAX_LINE_SIZE] = {0};
+    char* iter = (char*)&attrib_locations[0];
+    do {
+      i32 scan_status = 0;
+      safe_scanf(scan_status, iter, "%s\n", line);
+      if (scan_status == EOF) {
+        break;
+      }
+
+      if (!string_n_cmp(line, "attribute", MAX_LINE_SIZE)) {
+        char name[MAX_LINE_SIZE] = {0};
+        i32 location = -1;
+        safe_scanf(scan_status, iter, "%s", name);
+        safe_scanf(scan_status, iter, "%i", &location);
+        if (location >= 0) {
+          glBindAttribLocation(program, location, name);
+        }
+      }
+    } while (1);
+  }
+
   glLinkProgram(program);
 
   glGetProgramiv(program, GL_VALIDATE_STATUS, &compile_report);
@@ -134,7 +158,6 @@ i32 shader_compile_from_source(const char* vert_source, const char* frag_source,
   }
 #endif
   *program_out = program;
-
 done:
   if (vert_shader > 0)
     glDeleteShader(vert_shader);
@@ -298,9 +321,9 @@ i32 renderer_init() {
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
 
-  shader_compile_from_source(sprite_vert, sprite_frag, &basic_shader);
-  shader_compile_from_source(diffuse_vert, diffuse_frag, &diffuse_shader);
-  shader_compile_from_source(diffuse2_vert, diffuse2_frag, &diffuse2_shader);
+  shader_compile_from_source(sprite_vert, sprite_frag, NULL, &basic_shader);
+  shader_compile_from_source(diffuse_vert, diffuse_frag, diffuse_attribs, &diffuse_shader);
+  shader_compile_from_source(diffuse2_vert, diffuse2_frag, diffuse2_attribs, &diffuse2_shader);
 
   upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
   return NO_ERR;

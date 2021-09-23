@@ -22,5 +22,10 @@ for f in *.frag; do
 	printf "extern char $(string_replace $f)[];\n" >> "${HEADER}";
 done
 
+for f in *.attribs; do
+	./shader_compile $f >> "${SOURCE}"
+	printf "extern char $(string_replace $f)[];\n" >> "${HEADER}";
+done
+
 printf "\n#endif\n" >> "${HEADER}"
 

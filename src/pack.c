@@ -180,7 +180,7 @@ Dir_entry pack(Pack_state* p, char* path, char* file_name, DIR* dir) {
   pack_write_at(p, &file_header, sizeof(File_header), header_location);
   return (Dir_entry) {
     .location = header_location,
-    .name_hash = hash(file_header.name, FILE_NAME_LENGTH),
+    .name_hash = hash((u8*)file_header.name, FILE_NAME_LENGTH),
   };
 }
 
@@ -213,7 +213,7 @@ i32 pack_iterate_path(Pack_state* p, const char* path, File_header current, File
   u8 end = 0;
   char name[FILE_NAME_LENGTH] = {0};
   u32 length = string_copy_filename_in_path(name, path, &end);
-  u32 name_hash = hash(name, FILE_NAME_LENGTH);
+  u32 name_hash = hash((u8*)name, FILE_NAME_LENGTH);
   if (current.type == FILE_TYPE_DIR) {
     Dir_entry* entries = zone_malloc(current.size);
     if (entries) {

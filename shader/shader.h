@@ -9,5 +9,7 @@ extern char sprite_vert[];
 extern char diffuse2_frag[];
 extern char diffuse_frag[];
 extern char sprite_frag[];
+extern char diffuse2_attribs[];
+extern char diffuse_attribs[];
 
 #endif

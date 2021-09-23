@@ -1,13 +1,5 @@
 // mesh_wavefront.c
 
-#define MAX_LINE_SIZE 256
-
-#define safe_scanf(ScanStatus, Iterator, Format, ...) { \
-  i32 num_bytes_read = 0; \
-  ScanStatus = sscanf(Iterator, Format "%n", __VA_ARGS__, &num_bytes_read); \
-  Iterator += num_bytes_read; \
-}
-
 // Prefetch mesh information (number of vertices, normals, indices e.t.c.), and load that information into the mesh itself
 static i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort);
 static i32 wavefront_parse_mesh(Buffer* buffer, Mesh* mesh);
