@@ -22,5 +22,5 @@ void main() {
 	float delta = max(dot(normal, light_direction), 0.0);
 	vec3 diffuse = delta * light_color;
 
-	out_color = vec4((ambient + diffuse), 1.0) * texture2D(tex, uv_coord);
+	out_color = vec4((ambient + diffuse), 1.0) * texture(tex, uv_coord);
 }

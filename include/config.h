@@ -12,4 +12,7 @@
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
 
+#define GAME_TITLE "game"
+#define VSYNC 0
+
 #endif

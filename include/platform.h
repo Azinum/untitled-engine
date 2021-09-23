@@ -73,6 +73,8 @@ i32 platform_window_width();
 
 i32 platform_window_height();
 
+void platform_window_set_title(const char* title);
+
 i32 platform_close_window();
 
 #endif

@@ -40,7 +40,9 @@ typedef union m4 {
 #define V3(_x, _y, _z) ((v3) { .x = _x, .y = _y, .z = _z })
 #define V2(_x, _y) ((v2) { .x = _x, .y = _y })
 
-extern m4 m4d(float value);
+extern m4 m4d(f32 value);
+
+extern f32 lerp(f32 v0, f32 v1, f32 t);
 
 extern m4 m4_multiply(m4 a, m4 b);
 

@@ -236,9 +236,13 @@ void render_texture(i32 texture_id, v3 position, v3 size) {
   glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&orthogonal_proj);
   glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
 
-  v2 offset = V2((1.0f / 20.0f) * 2, 0.0f);
+#if 0
+  v2 offset = V2((1.0f / 20.0f) * 1, 0.0f);
   v2 range = V2((1.0f / 20.0f), 1.0f);
-
+#else
+  v2 offset = V2(0, 0);
+  v2 range = V2(1, 1);
+#endif
   glUniform2f(glGetUniformLocation(handle, "offset"), offset.x, offset.y);
   glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
 

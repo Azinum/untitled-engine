@@ -13,6 +13,10 @@ inline m4 m4d(float value) {
   return result;
 }
 
+inline float lerp(float v0, float v1, float t) {
+  return (1.0f - t) * v0 + t * v1;
+}
+
 inline m4 m4_multiply(m4 a, m4 b) {
   m4 result = {0};
 

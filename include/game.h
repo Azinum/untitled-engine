@@ -23,6 +23,7 @@ typedef struct Game {
   u8 running;
   Entity entities[MAX_ENTITY];
   u32 entity_count;
+  f64 dt;
 } Game;
 
 i32 game_start(i32 argc, char** argv);

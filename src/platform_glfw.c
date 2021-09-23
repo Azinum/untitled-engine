@@ -138,6 +138,11 @@ i32 platform_window_height() {
   return window.height;
 }
 
+void platform_window_set_title(const char* title) {
+  assert(title);
+  glfwSetWindowTitle(window.window, title);
+}
+
 i32 platform_close_window() {
   if (window.window) {
     glfwDestroyWindow(window.window);
