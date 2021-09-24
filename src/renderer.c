@@ -6,9 +6,9 @@
   #include "renderer_null.c"
 #endif
 
-#define FOV 80
+#define FOV 60
 #define Z_NEAR 0.1f
-#define Z_FAR 400.0f
+#define Z_FAR 300.0f
 
 void renderer_framebuffer_cb(i32 window_width, i32 window_height) {
   perspective_proj = perspective(FOV, (float)window_width / window_height, Z_NEAR, Z_FAR);

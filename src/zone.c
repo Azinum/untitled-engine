@@ -33,8 +33,6 @@ const char* block_tag_info[MAX_BLOCK_TAG] = {
   "free",
 };
 
-#define BLOCK_NAME_SIZE 16
-
 typedef struct Block_header {
   u8 tag;
   size_t size;

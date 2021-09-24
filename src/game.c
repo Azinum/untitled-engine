@@ -16,8 +16,6 @@
 #include "platform.c"
 #include "entity.c"
 
-#include <sys/time.h> // gettimeofday
-
 #define MAX_TITLE_SIZE 128
 
 static i32 game_state_init(Game* game);
