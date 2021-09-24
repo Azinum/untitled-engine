@@ -9,6 +9,8 @@ void zone_print_all(FILE* fp);
 
 i32 zone_validate();
 
+void zone_sweep();
+
 void* zone_malloc(size_t size);
 
 void* zone_calloc(size_t count, size_t size);

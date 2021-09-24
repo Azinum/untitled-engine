@@ -179,6 +179,32 @@ i32 zone_validate() {
   return size_total == z->size;
 }
 
+void zone_sweep() {
+  Zone* z = zone;
+
+  size_t size_total = 0;
+  size_t location = 0;
+
+  for (size_t index = 0; index < z->size;) {
+    Block_header* header = (Block_header*)&z->data[index];
+    Block_header* start = (Block_header*)&z->data[location];
+    size_t next_size = size_total + header->size;
+    index += header->size;
+
+    if (header->tag == TAG_BLOCK_FREE) {
+      size_total = next_size;
+    }
+    // Did we reach end or a used block?
+    if (header->tag == TAG_BLOCK_USED || index >= z->size) {
+      if (start->tag == TAG_BLOCK_FREE) {
+        start->size = size_total;
+      }
+      location = index;
+      size_total = 0;
+    }
+  }
+}
+
 void* zone_malloc(size_t size) {
   void* data = NULL;
   size = ALIGN(size);
@@ -225,6 +251,11 @@ size_t zone_free(void* p) {
   }
   header->tag = TAG_BLOCK_FREE;
   zone->total_alloc -= header->size;
+
+#define SWEEP_ON_FREE 1
+#if SWEEP_ON_FREE
+  zone_sweep();
+#endif
   return header->size;
 }
 
