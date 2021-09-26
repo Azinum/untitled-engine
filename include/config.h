@@ -5,7 +5,7 @@
 #define _CONFIG_H
 
 #define ZONE_MEMORY MB(32)
-#define ZONE_TEMP_MEMORY (i32)(0.1 * ZONE_MEMORY)
+#define ZONE_TEMP_MEMORY (u32)(0.1 * ZONE_MEMORY)
 
 #define PACK_FILE "build/data.pack"
 
@@ -14,5 +14,6 @@
 
 #define GAME_TITLE "game"
 #define VSYNC 0
+#define MAX_DT 0.5f
 
 #endif

@@ -108,6 +108,10 @@ void platform_set_framebuffer_callback(FbCallback fb_callback) {
   }
 }
 
+f64 platform_get_time() {
+  return glfwGetTime();
+}
+
 i32 platform_handle_events() {
   glfwPollEvents();
 

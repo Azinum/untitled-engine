@@ -37,7 +37,10 @@ u8 map[MAP_H][MAP_W] = {
 i32 game_state_init(Game* game) {
   game->running = 1;
   game->entity_count = 0;
+
+  game->tick = 0;
   game->dt = 0;
+  game->total_time = 0;
   return NO_ERR;
 }
 
@@ -68,22 +71,20 @@ i32 game_run(Game* game) {
   v3 target_p = p;
 
   char title[MAX_TITLE_SIZE] = {0};
-  struct timeval time_now = {0};
-  struct timeval time_last = {0};
+  f64 now = 0;
   f64 last = 0;
-  u32 tick = 0;
 
   while (game->running && platform_handle_events() >= 0) {
-    time_last = time_now;
-    gettimeofday(&time_now, NULL);
-    game->dt = ((((time_now.tv_sec - time_last.tv_sec) * 1000000.0f) + time_now.tv_usec) - (time_last.tv_usec)) / 1000000.0f;
-    if (game->dt > 0.5) {
-      game->dt = 0.5f;
+    last = now;
+    now = platform_get_time();
+    game->dt = now - last;
+    game->total_time += game->dt;
+    if (game->dt > MAX_DT) {
+      game->dt = MAX_DT;
     }
-    last += game->dt;
-    ++tick;
-    if (!(tick % 30)) {
-      snprintf(title, MAX_TITLE_SIZE, "%s | fps: %i", GAME_TITLE, (i32)(1.0f / game->dt));
+    ++game->tick;
+    if (!(game->tick % 16)) {
+      snprintf(title, MAX_TITLE_SIZE, "%s | fps: %i | dt: %g", GAME_TITLE, (i32)(1.0f / game->dt), game->dt);
       platform_window_set_title(title);
     }
 
@@ -113,9 +114,9 @@ i32 game_run(Game* game) {
     }
 
     p = V3(
-      lerp(p.x, target_p.x, 20.0f * game->dt),
-      lerp(p.y, target_p.y, 20.0f * game->dt),
-      lerp(p.z, target_p.z, 20.0f * game->dt)
+      lerp(p.x, target_p.x, 50.0f * game->dt),
+      lerp(p.y, target_p.y, 50.0f * game->dt),
+      lerp(p.z, target_p.z, 50.0f * game->dt)
     );
 
     renderer_begin_frame();

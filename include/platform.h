@@ -65,6 +65,8 @@ i32 platform_initialize_renderer();
 
 void platform_set_framebuffer_callback(FbCallback fb_callback);
 
+f64 platform_get_time();
+
 i32 platform_handle_events();
 
 void platform_swap_buffers();

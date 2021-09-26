@@ -88,7 +88,7 @@ i32 pack_state_init(Pack_state* p, const char* path) {
 i32 pack_read_state_init(Pack_state* p, const char* path) {
   i32 result = NO_ERR;
   i32 flags = O_RDONLY;
-  i32 fd = open(path, flags, 0664); // rw, rw, r
+  i32 fd = open(path, flags);
   if (fd < 0) {
     fprintf(stderr, "pack_read_state_init: Failed to open file '%s'\n", path);
     return ERR;
