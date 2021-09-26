@@ -39,6 +39,9 @@ void args_print_help(FILE* fp, Parse_arg* args, i32 num_args, i32 argc, char** a
 }
 
 i32 parse_args(Parse_arg* args, i32 num_args, i32 argc, char** argv) {
+  if (!argv) {
+    return NO_ERR;
+  }
   for (i32 index = 1; index < argc; ++index) {
     char* arg = argv[index];
     u8 long_flag = 0;

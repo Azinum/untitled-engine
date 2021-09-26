@@ -243,7 +243,7 @@ size_t zone_free(void* p) {
   size_t location = ((u8*)p - sizeof(Block_header)) - &zone->data[0];
   Block_header* header = (Block_header*)&zone->data[location];
 
-  if (header->tag != TAG_BLOCK_USED || header->size >= zone->size) {  // Sanity check
+  if (header->tag != TAG_BLOCK_USED || location + header->size > zone->size) {  // Sanity check
     fprintf(stderr, "zone_free: Failed to free zone block; corrupted block header (at %lu, %p)\n", location, (void*)header);
     return 0;
   }

@@ -120,7 +120,7 @@ i32 game_run(Game* game) {
 
     renderer_begin_frame();
 
-    render_texture(sheet_id, V3(32, 32, 0), V3(160*4, 8*4, 1));
+    render_texture(sheet_id, V3(16, 16, 0), V3(160*4, 8*4, 1));
 
     for (i32 y = 0; y < MAP_H; ++y) {
       for (i32 x = 0; x < MAP_W; ++x) {

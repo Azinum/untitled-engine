@@ -59,6 +59,7 @@ typedef struct Pack_state {
 } Pack_state;
 
 static i32 pack_state_init(Pack_state* p, const char* path);
+static i32 pack_read_state_init(Pack_state* p, const char* path);
 static void pack_state_free(Pack_state* p);
 static i32 pack_filter(const char* name);
 static Dir_entry pack(Pack_state* p, char* path, char* file_name, DIR* dir);
@@ -73,10 +74,23 @@ static void pack_print_hierarchy(Pack_state* p, Dir_entry* dir_entry, u32 level,
 
 i32 pack_state_init(Pack_state* p, const char* path) {
   i32 result = NO_ERR;
-  i32 flags = O_CREAT | O_RDWR | O_SYNC;
+  i32 flags = O_CREAT | O_TRUNC | O_RDWR | O_SYNC;
   i32 fd = open(path, flags, 0664); // rw, rw, r
   if (fd < 0) {
     fprintf(stderr, "pack_state_init: Failed to open file '%s'\n", path);
+    return ERR;
+  }
+  p->fd = fd;
+  p->cursor = 0;
+  return result;
+}
+
+i32 pack_read_state_init(Pack_state* p, const char* path) {
+  i32 result = NO_ERR;
+  i32 flags = O_RDONLY;
+  i32 fd = open(path, flags, 0664); // rw, rw, r
+  if (fd < 0) {
+    fprintf(stderr, "pack_read_state_init: Failed to open file '%s'\n", path);
     return ERR;
   }
   p->fd = fd;
@@ -316,7 +330,7 @@ i32 pack_dir(const char* dest, const char* source) {
 i32 unpack(const char* path) {
   i32 result = NO_ERR;
   Pack_state pack_state = {0};
-  pack_state_init(&pack_state, path);
+  pack_read_state_init(&pack_state, path);
 
   Pack_header header = {0};
   pack_read(&pack_state, &header, sizeof(Pack_header));
@@ -340,7 +354,7 @@ i32 read_pack_file(const char* path, const char* pack_file, Buffer* buffer) {
   i32 result = NO_ERR;
 
   Pack_state pack_state = {0};
-  if ((result = pack_state_init(&pack_state, pack_file)) == NO_ERR) {
+  if ((result = pack_read_state_init(&pack_state, pack_file)) == NO_ERR) {
     Pack_header header = {0};
     pack_read(&pack_state, &header, sizeof(Pack_header));
     if (header.magic == PACK_HEADER_MAGIC) {

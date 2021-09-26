@@ -13,6 +13,6 @@
 #define WIN_HEIGHT 600
 
 #define GAME_TITLE "game"
-#define VSYNC 1
+#define VSYNC 0
 
 #endif
