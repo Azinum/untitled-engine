@@ -4,7 +4,7 @@ void render_texture(i32 texture_id, v3 position, v3 size) {
 
 }
 
-void render_model(i32 model_id, i32 texture_id, v3 position, v3 size) {
+void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
 
 }
 
@@ -12,7 +12,7 @@ i32 renderer_upload_mesh(Mesh* mesh) {
   return -1;
 }
 
-i32 renderer_upload_texture(Image* texture) {
+i32 renderer_upload_texture(Image* source, Texture* texture) {
   return -1;
 }
 

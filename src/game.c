@@ -46,21 +46,20 @@ i32 game_state_init(Game* game) {
 
 i32 game_run(Game* game) {
   i32 cube_id = -1;
-  i32 texture_id = -1;
-  i32 sheet_id = -1;
+  Texture ground_texture;
+  Texture sheet_texture;
 
 {
-  Image texture;
-  image_load_from_pack("data/texture/stone_ground.bmp", PACK_FILE, &texture);
-  texture_id = renderer_upload_texture(&texture);
-  image_unload(&texture);
+  Image source;
+  image_load_from_pack("data/texture/stone_ground.bmp", PACK_FILE, &source);
+  renderer_upload_texture(&source, &ground_texture);
+  image_unload(&source);
 }
-
 {
-  Image texture;
-  image_load_from_pack("data/sprite/sheet.bmp", PACK_FILE, &texture);
-  sheet_id = renderer_upload_texture(&texture);
-  image_unload(&texture);
+  Image source;
+  image_load_from_pack("data/sprite/sheet.bmp", PACK_FILE, &source);
+  renderer_upload_texture(&source, &sheet_texture);
+  image_unload(&source);
 }
   Mesh mesh;
   mesh_load("data/mesh/cube.obj", &mesh);
@@ -121,8 +120,9 @@ i32 game_run(Game* game) {
 
     renderer_begin_frame();
 
-    render_texture(sheet_id, V3(16, 16, 0), V3(160*4, 8*4, 1));
+    render_texture(&sheet_texture, V3(16, 16, 0), V3(160*4, 8*4, 1));
 
+#if 1
     for (i32 y = 0; y < MAP_H; ++y) {
       for (i32 x = 0; x < MAP_W; ++x) {
         v3 pos = V3(
@@ -132,13 +132,13 @@ i32 game_run(Game* game) {
         );
         u8 value = map[y][x];
         if (value) {
-          render_model(cube_id, texture_id, pos, V3(1, 1, 1));
+          render_model(cube_id, &ground_texture, pos, V3(1, 1, 1));
         }
-        render_model(cube_id, texture_id, V3(pos.x, pos.y + 1, pos.z), V3(1, 1, 1));
-        render_model(cube_id, texture_id, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
+        render_model(cube_id, &ground_texture, V3(pos.x, pos.y + 1, pos.z), V3(1, 1, 1));
+        render_model(cube_id, &ground_texture, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
       }
     }
-
+#endif
     renderer_end_frame(30, 30, 30);
   }
   return NO_ERR;

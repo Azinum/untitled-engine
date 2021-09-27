@@ -9,8 +9,6 @@
 #include <time.h>
 #include <pthread.h>
 
-#include <sys/time.h> // gettimeofday
-
 typedef float f32;
 typedef double f64;
 typedef int64_t i64;

@@ -25,15 +25,21 @@ f32 quad_vertices[] = {
   1.0f, 0.0f, 1.0f, 0.0f,
 };
 
+typedef struct Texture {
+  u16 width;
+  u16 height;
+  i32 id;
+} Texture;
+
 void renderer_framebuffer_cb(i32 window_width, i32 window_height); // Implemented in renderer.c
 
-void render_texture(i32 texture_id, v3 position, v3 size);
+void render_texture(const Texture* texture, v3 position, v3 size);
 
-void render_model(i32 model_id, i32 texture_id, v3 position, v3 size);
+void render_model(i32 model_id, const Texture* texture, v3 position, v3 size);
 
 i32 renderer_upload_mesh(Mesh* mesh);
 
-i32 renderer_upload_texture(Image* texture);
+i32 renderer_upload_texture(Image* source, Texture* texture);
 
 i32 renderer_init();
 

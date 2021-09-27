@@ -222,13 +222,9 @@ void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, voi
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void render_texture(i32 texture_id, v3 position, v3 size) {
-  if (texture_id < 0 || texture_id >= renderer.texture_count) return;
-
+void render_texture(const Texture* texture, v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
-
-  u32 texture = renderer.textures[texture_id];
 
   model = translate(position);
   model = m4_multiply(model, scale(size));
@@ -247,7 +243,7 @@ void render_texture(i32 texture_id, v3 position, v3 size) {
   glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  glBindTexture(GL_TEXTURE_2D, texture->id);
 
   glBindVertexArray(quad_vao);
   DRAW_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
@@ -256,14 +252,11 @@ void render_texture(i32 texture_id, v3 position, v3 size) {
   glUseProgram(0);
 }
 
-void render_model(i32 model_id, i32 texture_id, v3 position, v3 size) {
+void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
   if (model_id < 0 || model_id >= renderer.model_count) return;
-  if (texture_id < 0 || texture_id >= renderer.texture_count) return;
 
   u32 handle = diffuse2_shader;
   glUseProgram(handle);
-
-  u32 texture = renderer.textures[texture_id];
 
   model = translate(position);
 
@@ -283,7 +276,7 @@ void render_model(i32 model_id, i32 texture_id, v3 position, v3 size) {
   glEnableVertexAttribArray(2);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  glBindTexture(GL_TEXTURE_2D, texture->id);
 
   DRAW_CALL(glDrawElements(GL_TRIANGLES, m->draw_count, GL_UNSIGNED_INT, 0));
 
@@ -307,15 +300,17 @@ i32 renderer_upload_mesh(Mesh* mesh) {
   return id;
 }
 
-i32 renderer_upload_texture(Image* texture) {
+i32 renderer_upload_texture(Image* source, Texture* texture) {
   assert(texture);
-  i32 id = -1;
   if (renderer.texture_count < MAX_TEXTURE) {
-    id = renderer.texture_count;
     u32* texture_id = &renderer.textures[renderer.texture_count++];
-    upload_texture(texture, texture_id);
+    upload_texture(source, texture_id);
+    texture->width = source->width;
+    texture->height = source->height;
+    texture->id = *texture_id;
+    return NO_ERR;
   }
-  return id;
+  return ERR;
 }
 
 i32 renderer_init() {
