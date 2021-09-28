@@ -13,6 +13,7 @@
 #include "bmp.c"
 #include "mesh.c"
 #include "renderer.c"
+#include "camera.c"
 #include "platform.c"
 #include "entity.c"
 
@@ -41,6 +42,8 @@ i32 game_state_init(Game* game) {
   game->tick = 0;
   game->dt = 0;
   game->total_time = 0;
+
+  camera_init(V3(0, 0, 0));
   return NO_ERR;
 }
 
@@ -94,16 +97,32 @@ i32 game_run(Game* game) {
       zone_print_all(stdout);
     }
     if (key_pressed[KEY_A]) {
-      target_p.x -= 1;
+      camera.yaw -= 90;
     }
     if (key_pressed[KEY_D]) {
-      target_p.x += 1;
+      camera.yaw += 90;
     }
     if (key_pressed[KEY_W]) {
-      target_p.z -= 1;
+      target_p = V3_OP(
+        V3(
+          camera.forward.x,
+          0,
+          camera.forward.z
+        ),
+        target_p,
+        +
+      );
     }
     if (key_pressed[KEY_S]) {
-      target_p.z += 1;
+      target_p = V3_OP(
+        V3(
+          camera.forward.x,
+          0,
+          -camera.forward.z
+        ),
+        target_p,
+        +
+      );
     }
     if (key_pressed[KEY_Z]) {
       target_p.y -= 1;
@@ -112,11 +131,17 @@ i32 game_run(Game* game) {
       target_p.y += 1;
     }
 
+#if 0
     p = V3(
       lerp(p.x, target_p.x, 50.0f * game->dt),
       lerp(p.y, target_p.y, 50.0f * game->dt),
       lerp(p.z, target_p.z, 50.0f * game->dt)
     );
+#else
+    p = target_p;
+#endif
+    camera.position = p;
+    camera_update();
 
     renderer_begin_frame();
 
@@ -125,9 +150,7 @@ i32 game_run(Game* game) {
     for (i32 y = 0; y < MAP_H; ++y) {
       for (i32 x = 0; x < MAP_W; ++x) {
         v3 pos = V3(
-          x - p.x,
-          p.y,
-          y - p.z
+          x, 0, y
         );
         u8 value = map[y][x];
         if (value) {

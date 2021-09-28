@@ -13,8 +13,85 @@ inline m4 m4d(float value) {
   return result;
 }
 
+inline f32 v3_dot(v3 a, v3 b) {
+  return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+}
+
+inline v3 v3_cross(v3 a, v3 b) {
+  return V3(
+    (a.y * b.z) - (a.z * b.y),
+    (a.z * b.x) - (a.x * b.z),
+    (a.x * b.y) - (a.y * b.x)
+  );
+}
+
+inline f32 v3_length_square(v3 a) {
+  return v3_dot(a, a);
+}
+
+inline f32 v3_length(v3 a) {
+  return square_root(v3_length_square(a));
+}
+
+inline f32 v3_length_normalize(v3 a) {
+  return fast_inv_sqrt(v3_length_square(a));
+}
+
+inline v3 v3_normalize(v3 a) {
+  v3 result = {0};
+  f32 length = v3_length(a);
+  if (length != 0) {
+    result.x = a.x * (1.0f / length);
+    result.y = a.y * (1.0f / length);
+    result.z = a.z * (1.0f / length);
+  }
+  return result;
+}
+
+inline v3 v3_normalize_fast(v3 a) {
+  f32 length = v3_length_normalize(a);
+
+  return V3(
+    a.x * length,
+    a.y * length,
+    a.z * length
+  );
+}
+
+inline f32 fast_inv_sqrt(f32 a) {
+  // union { f32 f; i32 i; };
+
+  long i = 0;
+  f32 x2 = 0;
+  f32 y = 0;
+  const float three_halfs = 1.5f;
+
+  x2 = a * 0.5f;
+  y = a;
+  i = *(long*)&y;
+  i = 0x5f3759df - (i >> 1);
+  y = *(f32*)&i;
+  y = y * (three_halfs - (x2 * y * y));
+
+  return y;
+}
+
 inline float lerp(float v0, float v1, float t) {
   return (1.0f - t) * v0 + t * v1;
+}
+
+inline f32 radians(f32 angle) {
+  return angle * (PI32 / 180.0f);
+}
+
+inline f32 square_root(f32 a) {
+  f32 result = 0;
+#if USE_SSE
+  result = _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(a)));
+#else
+  result = sqrtf(a);
+#endif
+  return result;
 }
 
 inline m4 m4_multiply(m4 a, m4 b) {
@@ -80,4 +157,31 @@ inline m4 perspective(f32 fov, f32 aspect, f32 z_near, f32 z_far) {
   result.e[3][3] = 0.0f;
 
   return result;
+}
+
+inline m4 look_at(v3 eye, v3 center, v3 up) {
+	m4 result = m4d(1.0f);
+
+	v3 front = v3_normalize(V3_OP(center, eye, -));
+	v3 side = v3_normalize(v3_cross(front, up));
+	v3 u = v3_cross(side, front);
+
+	result.e[0][0] = side.x;
+	result.e[0][1] = u.x;
+	result.e[0][2] = -front.x;
+
+	result.e[1][0] = side.y;
+	result.e[1][1] = u.y;
+	result.e[1][2] = -front.y;
+
+	result.e[2][0] = side.z;
+	result.e[2][1] = u.z;
+	result.e[2][2] = -front.z;
+
+	result.e[3][0] = -v3_dot(side, eye);
+	result.e[3][1] = -v3_dot(u, eye);
+	result.e[3][2] = v3_dot(front, eye);
+	result.e[3][3] = 1.0f;
+
+	return result;
 }

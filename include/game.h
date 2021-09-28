@@ -14,6 +14,7 @@
 #include "bmp.h"
 #include "mesh.h"
 #include "renderer.h"
+#include "camera.h"
 #include "platform.h"
 #include "entity.h"
 
