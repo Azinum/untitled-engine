@@ -1,13 +1,13 @@
 # config.mk
 
 USE_X11?=0
-USE_OPENGL?=1
 USE_GLFW?=1
+USE_OPENGL?=1
 NO_SSE?=0
 
 CC=gcc
 
-LIBS=-lm -lpthread
+LIBS=-lm
 
 PROG=game
 

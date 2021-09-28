@@ -1,12 +1,8 @@
 // platform_glfw.c
 // Use glfw as a platform layer 'backend'
 
-#include <GL/glew.h>
-
-#if __APPLE__
-  #include <OpenGL/gl.h>
-#else
-  #include <GL/gl.h>
+#if !USE_OPENGL
+  #error "OpenGL must be used with GLFW"
 #endif
 
 #include <GLFW/glfw3.h>

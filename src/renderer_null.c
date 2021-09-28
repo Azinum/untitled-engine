@@ -1,6 +1,6 @@
 // renderer_null.c
 
-void render_texture(i32 texture_id, v3 position, v3 size) {
+void render_texture(const Texture* texture, v3 position, v3 size) {
 
 }
 

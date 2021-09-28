@@ -122,7 +122,6 @@ i32 game_run(Game* game) {
 
     render_texture(&sheet_texture, V3(16, 16, 0), V3(160*4, 8*4, 1));
 
-#if 1
     for (i32 y = 0; y < MAP_H; ++y) {
       for (i32 x = 0; x < MAP_W; ++x) {
         v3 pos = V3(
@@ -138,7 +137,6 @@ i32 game_run(Game* game) {
         render_model(cube_id, &ground_texture, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
       }
     }
-#endif
     renderer_end_frame(30, 30, 30);
   }
   return NO_ERR;

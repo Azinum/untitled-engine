@@ -6,7 +6,7 @@
   #include "renderer_null.c"
 #endif
 
-#define FOV 60
+#define FOV 70
 #define Z_NEAR 0.1f
 #define Z_FAR 300.0f
 
