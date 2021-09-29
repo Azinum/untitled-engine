@@ -49,7 +49,6 @@ i32 audio_engine_init(Audio_engine* a) {
     return ERR;
   }
 
-  i32 device_count = Pa_GetDeviceCount();
   i32 output_device = Pa_GetDefaultOutputDevice();
   out_port.device = output_device;
   out_port.channelCount = 2;

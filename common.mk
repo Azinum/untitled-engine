@@ -22,6 +22,15 @@ ifeq (${USE_PORTAUDIO}, 1)
 	FLAGS+=-D USE_PORTAUDIO
 endif
 
+ifeq (${USE_GTK}, 1)
+	ifeq ($(shell pkg-config --atleast-version=3.0 gtk+-3.0 && echo 1), 1)
+		LIBS+=`pkg-config --libs gtk+-3.0`
+		FLAGS+=`pkg-config --cflags gtk+-3.0` -D USE_GTK
+	else
+		USE_GTK=0
+	endif
+endif
+
 ifeq (${PLATFORM}, LINUX)
 	ifeq (${USE_X11}, 1)
 		LIBS+=-lX11

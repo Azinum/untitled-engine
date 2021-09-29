@@ -7,6 +7,8 @@ NO_SSE?=0
 
 USE_PORTAUDIO?=1
 
+USE_GTK?=0
+
 CC=gcc
 
 LIBS=-lm
