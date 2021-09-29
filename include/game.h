@@ -13,6 +13,7 @@
 #include "image.h"
 #include "bmp.h"
 #include "mesh.h"
+#include "audio_engine.h"
 #include "renderer.h"
 #include "camera.h"
 #include "platform.h"

@@ -18,5 +18,7 @@ static f32 g_dt_max = 0.5f;
 static f32 g_camera_fov = 90;
 static f32 g_camera_near = 0.1f;
 static f32 g_camera_far = 200.0f;
+static i32 g_sample_rate = 44100;
+static i32 g_frames_per_buffer = 256;
 
 #endif

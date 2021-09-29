@@ -12,6 +12,7 @@
 #include "image.c"
 #include "bmp.c"
 #include "mesh.c"
+#include "audio_engine.c"
 #include "renderer.c"
 #include "camera.c"
 #include "platform.c"
@@ -167,6 +168,7 @@ i32 game_start(i32 argc, char** argv) {
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);
+  audio_engine_state_init(g_sample_rate, g_frames_per_buffer);
 
   if (platform_open_window(g_win_width, g_win_height, g_vsync, g_fullscreen, g_game_title) == NO_ERR) {
     platform_set_framebuffer_callback(renderer_framebuffer_cb);
@@ -175,6 +177,7 @@ i32 game_start(i32 argc, char** argv) {
     platform_close_window();
     renderer_free();
   }
+  audio_engine_terminate();
   zone_free(game);
   zone_memory_free();
   assert(memory_total() == 0 && "memory leak!");

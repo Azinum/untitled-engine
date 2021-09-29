@@ -5,6 +5,8 @@ USE_GLFW?=1
 USE_OPENGL?=1
 NO_SSE?=0
 
+USE_PORTAUDIO?=1
+
 CC=gcc
 
 LIBS=-lm

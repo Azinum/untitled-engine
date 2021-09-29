@@ -17,6 +17,11 @@ ifndef PLATFORM
 	endif
 endif
 
+ifeq (${USE_PORTAUDIO}, 1)
+	LIBS+=-lportaudio
+	FLAGS+=-D USE_PORTAUDIO
+endif
+
 ifeq (${PLATFORM}, LINUX)
 	ifeq (${USE_X11}, 1)
 		LIBS+=-lX11
