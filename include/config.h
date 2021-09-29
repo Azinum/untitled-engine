@@ -9,11 +9,14 @@
 
 #define PACK_FILE "build/data.pack"
 
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 600
-
-#define GAME_TITLE "game"
-#define VSYNC 0
-#define MAX_DT 0.5f
+static i32 g_win_width = 800;
+static i32 g_win_height = 600;
+static const char* g_game_title = "game";
+static i32 g_vsync = 0;
+static i32 g_fullscreen = 0;
+static f32 g_dt_max = 0.5f;
+static f32 g_camera_fov = 90;
+static f32 g_camera_near = 0.1f;
+static f32 g_camera_far = 200.0f;
 
 #endif

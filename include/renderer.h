@@ -43,6 +43,8 @@ i32 renderer_upload_texture(Image* source, Texture* texture);
 
 i32 renderer_init();
 
+u32 renderer_num_draw_calls();
+
 void renderer_begin_frame();
 
 void renderer_end_frame(u8 r, u8 g, u8 b);

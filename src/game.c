@@ -43,7 +43,7 @@ i32 game_state_init(Game* game) {
   game->dt = 0;
   game->total_time = 0;
 
-  camera_init(V3(0, 0, 0));
+  camera_init(V3(3, 0, 3));
   return NO_ERR;
 }
 
@@ -69,9 +69,6 @@ i32 game_run(Game* game) {
   cube_id = renderer_upload_mesh(&mesh);
   mesh_unload(&mesh);
 
-  v3 p = V3(MAP_W / 2, 0, MAP_H);
-  v3 target_p = p;
-
   char title[MAX_TITLE_SIZE] = {0};
   f64 now = 0;
   f64 last = 0;
@@ -81,12 +78,12 @@ i32 game_run(Game* game) {
     now = platform_get_time();
     game->dt = now - last;
     game->total_time += game->dt;
-    if (game->dt > MAX_DT) {
-      game->dt = MAX_DT;
+    if (game->dt > g_dt_max) {
+      game->dt = g_dt_max;
     }
     ++game->tick;
     if (!(game->tick % 16)) {
-      snprintf(title, MAX_TITLE_SIZE, "%s | fps: %i | dt: %g", GAME_TITLE, (i32)(1.0f / game->dt), game->dt);
+      snprintf(title, MAX_TITLE_SIZE, "%s | fps: %i | dt: %g | draw calls: %u", g_game_title, (i32)(1.0f / game->dt), game->dt, renderer_num_draw_calls());
       platform_window_set_title(title);
     }
 
@@ -96,6 +93,10 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_0]) {
       zone_print_all(stdout);
     }
+    if (key_pressed[KEY_R]) {
+      game_state_init(game);
+      continue;
+    }
     if (key_pressed[KEY_A]) {
       camera.yaw -= 90;
     }
@@ -103,44 +104,40 @@ i32 game_run(Game* game) {
       camera.yaw += 90;
     }
     if (key_pressed[KEY_W]) {
-      target_p = V3_OP(
+      camera.target = V3_OP(
         V3(
           camera.forward.x,
           0,
           camera.forward.z
         ),
-        target_p,
+        camera.target,
         +
       );
     }
     if (key_pressed[KEY_S]) {
-      target_p = V3_OP(
+      camera.target = V3_OP(
         V3(
-          camera.forward.x,
+          -camera.forward.x,
           0,
           -camera.forward.z
         ),
-        target_p,
+        camera.target,
         +
       );
     }
     if (key_pressed[KEY_Z]) {
-      target_p.y -= 1;
+      camera.target.y -= 1;
     }
     if (key_pressed[KEY_X]) {
-      target_p.y += 1;
+      camera.target.y += 1;
     }
 
-#if 0
-    p = V3(
-      lerp(p.x, target_p.x, 50.0f * game->dt),
-      lerp(p.y, target_p.y, 50.0f * game->dt),
-      lerp(p.z, target_p.z, 50.0f * game->dt)
+    camera.pos = V3(
+      lerp(camera.pos.x, camera.target.x, 50.0f * game->dt),
+      lerp(camera.pos.y, camera.target.y, 50.0f * game->dt),
+      lerp(camera.pos.z, camera.target.z, 50.0f * game->dt)
     );
-#else
-    p = target_p;
-#endif
-    camera.position = p;
+
     camera_update();
 
     renderer_begin_frame();
@@ -171,7 +168,7 @@ i32 game_start(i32 argc, char** argv) {
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);
 
-  if (platform_open_window(WIN_WIDTH, WIN_HEIGHT, VSYNC, 0, "game") == NO_ERR) {
+  if (platform_open_window(g_win_width, g_win_height, g_vsync, g_fullscreen, g_game_title) == NO_ERR) {
     platform_set_framebuffer_callback(renderer_framebuffer_cb);
     renderer_init();
     game_run(game);

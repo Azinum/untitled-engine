@@ -20,6 +20,10 @@ i32 renderer_init() {
   return NO_ERR;
 }
 
+u32 renderer_num_draw_calls() {
+  return 0;
+}
+
 void renderer_begin_frame() {
 
 }

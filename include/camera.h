@@ -4,7 +4,8 @@
 #define _CAMERA_H
 
 typedef struct Camera {
-  v3 position;
+  v3 pos;
+  v3 target;
   v3 up;
   v3 right;
   v3 forward;

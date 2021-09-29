@@ -38,6 +38,7 @@ typedef union m4 {
 } m4;
 
 #define V3_OP(_a, _b, _op) V3(_a.x _op _b.x, _a.y _op _b.y, _a.z _op _b.z)
+#define V3_OP1(_a, _b, _op) V3(_a.x _op _b, _a.y _op _b, _a.z _op _b)
 #define V3(_x, _y, _z) ((v3) { .x = _x, .y = _y, .z = _z })
 #define V2(_x, _y) ((v2) { .x = _x, .y = _y })
 

@@ -328,6 +328,10 @@ i32 renderer_init() {
   return NO_ERR;
 }
 
+u32 renderer_num_draw_calls() {
+  return renderer.draw_calls;
+}
+
 void renderer_begin_frame() {
   renderer.draw_calls = 0;
 }
