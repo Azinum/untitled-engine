@@ -4,6 +4,7 @@
 #define _GAME_H
 
 #include "common.h"
+#include "random.h"
 #include "arg_parser.h"
 #include "config.h"
 #include "memory.h"

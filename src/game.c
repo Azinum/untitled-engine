@@ -3,6 +3,7 @@
 #include "game.h"
 
 #include "common.c"
+#include "random.c"
 #include "arg_parser.c"
 #include "config.c"
 #include "memory.c"
@@ -165,6 +166,7 @@ i32 game_run(Game* game) {
 
 i32 game_start(i32 argc, char** argv) {
   zone_memory_init(ZONE_MEMORY, ZONE_TEMP_MEMORY);
+  lc_random_init(time(NULL));
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);
