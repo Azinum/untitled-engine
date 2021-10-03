@@ -13,6 +13,7 @@ m4 model = {0};
 m4 view = {0};
 m4 perspective_proj = {0};
 m4 orthogonal_proj = {0};
+m4* projection = &perspective_proj;
 
 f32 quad_vertices[] = {
   // Vertex,  uv coord

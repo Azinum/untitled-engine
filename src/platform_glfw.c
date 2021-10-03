@@ -63,6 +63,10 @@ Window window;
 static void framebuffer_callback(GLFWwindow* glfw_window, i32 width, i32 height);
 
 void framebuffer_callback(GLFWwindow* glfw_window, i32 width, i32 height) {
+  glViewport(0, 0, width, height);
+  glfwGetWindowSize(glfw_window, &width, &height);
+  window.width = width;
+  window.height = height;
   if (window.fb_callback) {
     window.fb_callback(width, height);
   }
@@ -79,7 +83,7 @@ i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, const c
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_FOCUSED, GL_TRUE);
-  glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 #if __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

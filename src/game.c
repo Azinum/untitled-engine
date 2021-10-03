@@ -45,7 +45,7 @@ i32 game_state_init(Game* game) {
   game->dt = 0;
   game->total_time = 0;
 
-  camera_init(V3(3, 0, 3));
+  camera_init(V3(3, 0, 3), PERSPECTIVE);
   return NO_ERR;
 }
 
@@ -98,6 +98,12 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_R]) {
       game_state_init(game);
       continue;
+    }
+    if (key_pressed[KEY_P]) {
+      camera_set_projection_mode(PERSPECTIVE);
+    }
+    if (key_pressed[KEY_O]) {
+      camera_set_projection_mode(ORTHOGONAL);
     }
     if (key_pressed[KEY_A]) {
       camera.yaw -= 90;

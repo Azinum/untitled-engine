@@ -232,13 +232,9 @@ void render_texture(const Texture* texture, v3 position, v3 size) {
   glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&orthogonal_proj);
   glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
 
-#if 0
-  v2 offset = V2((1.0f / 20.0f) * 1, 0.0f);
-  v2 range = V2((1.0f / 20.0f), 1.0f);
-#else
   v2 offset = V2(0, 0);
   v2 range = V2(1, 1);
-#endif
+
   glUniform2f(glGetUniformLocation(handle, "offset"), offset.x, offset.y);
   glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
 
@@ -254,6 +250,7 @@ void render_texture(const Texture* texture, v3 position, v3 size) {
 
 void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
   if (model_id < 0 || model_id >= renderer.model_count) return;
+  if (!projection) return;
 
   u32 handle = diffuse2_shader;
   glUseProgram(handle);
@@ -264,7 +261,7 @@ void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
 
   model = m4_multiply(model, scale(size));
 
-  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&perspective_proj);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)projection);
   glUniformMatrix4fv(glGetUniformLocation(handle, "view"), 1, GL_FALSE, (f32*)&view);
   glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
 
