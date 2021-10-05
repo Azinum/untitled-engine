@@ -20,8 +20,7 @@ endif
 ifeq (${USE_PORTAUDIO}, 1)
 	LIBS+=-lportaudio
 	FLAGS+=-D USE_PORTAUDIO
-endif
-ifeq (${USE_SDL}, 1)
+else ifeq (${USE_SDL}, 1)
 	LIBS+=-lSDL2
 	FLAGS+=-D USE_SDL
 endif
