@@ -21,6 +21,10 @@ ifeq (${USE_PORTAUDIO}, 1)
 	LIBS+=-lportaudio
 	FLAGS+=-D USE_PORTAUDIO
 endif
+ifeq (${USE_SDL}, 1)
+	LIBS+=-lSDL2
+	FLAGS+=-D USE_SDL
+endif
 
 ifeq (${USE_GTK}, 1)
 	ifeq ($(shell pkg-config --atleast-version=3.0 gtk+-3.0 && echo 1), 1)

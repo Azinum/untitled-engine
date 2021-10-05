@@ -6,12 +6,13 @@
 typedef struct Audio_engine {
   i32 sample_rate;
   i32 frames_per_buffer;
+  i32 channel_count;
   u8* out;
 } Audio_engine;
 
 extern Audio_engine audio_engine;
 
-i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer);
+i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer, i32 channel_count);
 
 i32 audio_engine_process(void* out_buffer);
 

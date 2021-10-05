@@ -11,13 +11,16 @@ Audio_engine* a = &audio_engine;
 
 #if USE_PORTAUDIO
   #include "audio_portaudio.c"
+#elif USE_SDL
+  #include "audio_sdl.c"
 #else
   #include "audio_null.c"
 #endif
 
-i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer) {
+i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer, i32 channel_count) {
   a->sample_rate = sample_rate;
   a->frames_per_buffer = frames_per_buffer;
+  a->channel_count = channel_count;
   a->out = NULL;
   i32 result = audio_engine_init(a);
   return result == NO_ERR ? audio_engine_start(a) : result;
@@ -27,7 +30,7 @@ i32 audio_engine_process(void* out_buffer) {
   f32* out = (f32*)out_buffer;
 
   for (u32 i = 0; i < a->frames_per_buffer; ++i) {
-    *out++ = 0;
+    *out++ = 0.1f * sinf((i * 110 * 2 * PI32) / a->sample_rate);
     *out++ = 0;
   }
   return NO_ERR;

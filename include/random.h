@@ -5,7 +5,7 @@
 
 typedef u32 random_t;
 
-void lc_random_init(random_t seed);
+random_t lc_random_init(random_t seed);
 
 random_t lc_random();
 

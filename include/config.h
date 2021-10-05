@@ -20,5 +20,6 @@ static f32 g_camera_near = 0.1f;
 static f32 g_camera_far = 200.0f;
 static i32 g_sample_rate = 44100;
 static i32 g_frames_per_buffer = 256;
+static i32 g_channel_count = 2;
 
 #endif

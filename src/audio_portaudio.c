@@ -51,7 +51,7 @@ i32 audio_engine_init(Audio_engine* a) {
 
   i32 output_device = Pa_GetDefaultOutputDevice();
   out_port.device = output_device;
-  out_port.channelCount = 2;
+  out_port.channelCount = a->channel_count;
   out_port.sampleFormat = paFloat32;
   out_port.suggestedLatency = Pa_GetDeviceInfo(out_port.device)->defaultLowOutputLatency;
   out_port.hostApiSpecificStreamInfo = NULL;
