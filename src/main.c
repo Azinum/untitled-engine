@@ -13,15 +13,18 @@ typedef struct Game_args {
 } Game_args;
 
 i32 main(i32 argc, char** argv) {
-  random_push_generator(RANDOM_LC);
+#if 0
   random_init(time(NULL));
+  random_push_generator(RANDOM_LC);
 
-  for (u32 i = 0; i < 10; ++i) {
-    u32 value = random_number() % 100;
-    printf("%u\n", value);
-  }
+  const u32 iterations = 10000000;
+  const u32 range = 10000;
+  f64 test_result = random_test(iterations, range);
+
+  fprintf(stdout, "test_result: %g, iterations: %u, range: %u\n", test_result, iterations, range);
 
   return 0;
+#endif
   Game_args game_args = {
     .pack = 0,
     .pack_file = "build/data.pack",

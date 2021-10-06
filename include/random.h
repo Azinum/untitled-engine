@@ -6,11 +6,13 @@
 typedef u64 random_t;
 
 typedef enum Random_type {
-  RANDOM_NONE = 0,
+  RANDOM_STUB = 0,
   RANDOM_LC,  // Linear congruent generator
 
   MAX_RANDOM_GENERATOR,
 } Random_type;
+
+f64 random_test(const u32 iterations, const u32 range);
 
 void random_push_generator(Random_type generator);
 
