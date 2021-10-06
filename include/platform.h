@@ -59,7 +59,7 @@ typedef void (*FbCallback)(i32 width, i32 height);
   u8 fullscreen; \
   FbCallback fb_callback
 
-i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, const char* title);
+i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, u8 resizeable, const char* title);
 
 i32 platform_initialize_renderer();
 

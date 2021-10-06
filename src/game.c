@@ -180,7 +180,7 @@ i32 game_start(i32 argc, char** argv) {
   game_state_init(game);
   audio_engine_state_init(g_sample_rate, g_frames_per_buffer, g_channel_count);
 
-  if (platform_open_window(g_win_width, g_win_height, g_vsync, g_fullscreen, g_game_title) == NO_ERR) {
+  if (platform_open_window(g_win_width, g_win_height, g_vsync, g_fullscreen, g_resizable_window, g_game_title) == NO_ERR) {
     platform_set_framebuffer_callback(renderer_framebuffer_cb);
     renderer_init();
     game_run(game);
