@@ -9,14 +9,15 @@ typedef random_t (*generator_func)();
 static generator_func generator_stack[MAX_GEN_STACK] = {NULL};
 static u32 generator_count = 0;
 
-static random_t stub_random();
-static random_t lc_random();
+static random_t stub();
+static random_t lc();
+static random_t xorshift();
 
-random_t stub_random() {
+random_t stub() {
   return ++current_seed;
 }
 
-random_t lc_random() {
+random_t lc() {
   const random_t a = 16807;
   const random_t multiplier = 2147483647;
   const random_t increment = 13;
@@ -26,9 +27,17 @@ random_t lc_random() {
   return current_seed;
 }
 
+random_t xorshift() {
+  current_seed ^= current_seed << 13;
+  current_seed ^= current_seed >> 17;
+  current_seed ^= current_seed << 5;
+  return current_seed;
+}
+
 static generator_func generator_table[MAX_RANDOM_GENERATOR] = {
-  stub_random,
-  lc_random,
+  stub,
+  lc,
+  xorshift,
 };
 
 f64 random_chi_square_test(const u32 iterations, const u32 range) {

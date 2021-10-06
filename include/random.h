@@ -8,6 +8,7 @@ typedef u64 random_t;
 typedef enum Random_type {
   RANDOM_STUB = 0,
   RANDOM_LC,  // Linear congruent generator
+  RANDOM_XORSHIFT,
 
   MAX_RANDOM_GENERATOR,
 } Random_type;

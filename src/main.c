@@ -13,11 +13,11 @@ typedef struct Game_args {
 } Game_args;
 
 i32 main(i32 argc, char** argv) {
-#if 1
+#if 0
   random_t value = time(NULL);
-  random_t seed = djb2_hash((void*)&value, sizeof(random_t));
+  random_t seed = sdbm_hash((void*)&value, sizeof(random_t));
   random_init(seed);
-  random_push_generator(RANDOM_LC);
+  random_push_generator(RANDOM_XORSHIFT);
 
   const u32 iterations = 10000000;
   const u32 range = 10000;
