@@ -13,6 +13,15 @@ typedef struct Game_args {
 } Game_args;
 
 i32 main(i32 argc, char** argv) {
+  random_push_generator(RANDOM_LC);
+  random_init(time(NULL));
+
+  for (u32 i = 0; i < 10; ++i) {
+    u32 value = random_number() % 100;
+    printf("%u\n", value);
+  }
+
+  return 0;
   Game_args game_args = {
     .pack = 0,
     .pack_file = "build/data.pack",

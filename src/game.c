@@ -172,7 +172,8 @@ i32 game_run(Game* game) {
 
 i32 game_start(i32 argc, char** argv) {
   zone_memory_init(ZONE_MEMORY, ZONE_TEMP_MEMORY);
-  lc_random_init(time(NULL));
+  random_push_generator(RANDOM_LC);
+  random_init(time(NULL));
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);

@@ -3,10 +3,23 @@
 #ifndef _RANDOM_H
 #define _RANDOM_H
 
-typedef u32 random_t;
+typedef u64 random_t;
 
-random_t lc_random_init(random_t seed);
+typedef enum Random_type {
+  RANDOM_NONE = 0,
+  RANDOM_LC,  // Linear congruent generator
 
-random_t lc_random();
+  MAX_RANDOM_GENERATOR,
+} Random_type;
+
+void random_push_generator(Random_type generator);
+
+void random_pop_generator();
+
+void random_clear_generators();
+
+random_t random_init(random_t seed);
+
+random_t random_number();
 
 #endif
