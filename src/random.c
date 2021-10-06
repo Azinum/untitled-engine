@@ -22,7 +22,7 @@ random_t lc() {
   const random_t multiplier = 2147483647;
   const random_t increment = 13;
 
-  current_seed = (current_seed * a + increment) & multiplier;
+  current_seed = (current_seed * a + increment) % multiplier;
 
   return current_seed;
 }
