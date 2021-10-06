@@ -21,24 +21,19 @@
 #include "entity.c"
 
 #define MAX_TITLE_SIZE 128
+#define SEED 811
 
 static i32 game_state_init(Game* game);
 static i32 game_run(Game* game);
 
-#define MAP_W 8
-#define MAP_H 8
-static const u8 map[MAP_H][MAP_W] = {
-  {1, 1, 1, 1, 1, 1, 1, 1},
-  {0, 0, 1, 0, 0, 0, 0, 0},
-  {0, 0, 1, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {1, 0, 0, 0, 0, 0, 1, 0},
-  {1, 1, 0, 0, 0, 0, 1, 0},
-  {1, 0, 0, 0, 0, 1, 1, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-};
+#define MAP_W 10
+#define MAP_H 10
+static u8 map[MAP_H][MAP_W] = {0};
 
 i32 game_state_init(Game* game) {
+  random_init(SEED);
+  random_push_generator(RANDOM_LC);
+
   game->running = 1;
   game->entity_count = 0;
 
@@ -47,6 +42,18 @@ i32 game_state_init(Game* game) {
   game->total_time = 0;
 
   camera_init(V3(3, 0, 3), PERSPECTIVE);
+
+  for (i32 y = 0; y < MAP_H; ++y) {
+    for (i32 x = 0; x < MAP_W; ++x) {
+      u8* block = &map[y][x];
+      if ((random_number() % 100) < 15) {
+        *block = 1;
+      }
+      else {
+        *block = 0;
+      }
+    }
+  }
   return NO_ERR;
 }
 
@@ -173,8 +180,6 @@ i32 game_run(Game* game) {
 
 i32 game_start(i32 argc, char** argv) {
   zone_memory_init(ZONE_MEMORY, ZONE_TEMP_MEMORY);
-  random_init(time(NULL));
-  random_push_generator(RANDOM_LC);
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);

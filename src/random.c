@@ -79,6 +79,7 @@ random_t random_init(random_t seed) {
   else {
     start_seed = current_seed = seed;
   }
+  random_clear_generators();
   return start_seed;
 }
 
