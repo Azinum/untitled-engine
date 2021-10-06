@@ -66,10 +66,6 @@ void memory_set(void* restrict dest, const u8 value, const u32 size);
 
 char* get_extension(const char* path);
 
-u32 hash(u8* s, u32 length);
-
-u32 string_hash(char* s);
-
 i32 string_cmp(const char* s0, const char* s1);
 
 i32 string_n_cmp(const char* s0, const char* s1, u32 size);

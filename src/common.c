@@ -45,26 +45,6 @@ char* get_extension(const char* path) {
   return iter;
 }
 
-u32 hash(u8* data, u32 length) {
-  u32 result = 5381;
-  if (!data) {
-    return result;
-  }
-
-  for (u32 i = 0; i < length; ++i) {
-    u8 ch = data[i];
-    if (ch == '\0') {
-      break;
-    }
-    result = ((result << 5) + result) + ch;
-  }
-  return result;
-}
-
-u32 string_hash(char* s) {
-  return hash((u8*)s, string_len(s));
-}
-
 i32 string_cmp(const char* s0, const char* s1) {
   return string_n_cmp(s0, s1, UINT32_MAX);
 }

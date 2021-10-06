@@ -1,7 +1,7 @@
 // random.c
 
-random_t start_seed = 0;
-random_t current_seed = 0;
+static random_t start_seed = 0;
+static random_t current_seed = 0;
 
 typedef random_t (*generator_func)();
 
@@ -31,14 +31,14 @@ static generator_func generator_table[MAX_RANDOM_GENERATOR] = {
   lc_random,
 };
 
-f64 random_test(const u32 iterations, const u32 range) {
+f64 random_chi_square_test(const u32 iterations, const u32 range) {
   f64 sum = 0;
   const random_t expected = range / 2;
   const random_t expected_total = iterations * expected;
 
   // Using Pearson's chi-square test to check the quality of
   // the distribution of random numbers:
-  // (o - e)^2 / e, where o = observed and e = expected
+  //    (o - e)^2 / e, where o = observed and e = expected
   for (u32 i = 0; i < iterations; ++i) {
     random_t value = random_number() % range;
     sum += ((value - expected) * (value - expected)) / expected;

@@ -13,15 +13,17 @@ typedef struct Game_args {
 } Game_args;
 
 i32 main(i32 argc, char** argv) {
-#if 0
-  random_init(time(NULL));
+#if 1
+  random_t value = time(NULL);
+  random_t seed = djb2_hash((void*)&value, sizeof(random_t));
+  random_init(seed);
   random_push_generator(RANDOM_LC);
 
   const u32 iterations = 10000000;
   const u32 range = 10000;
-  f64 test_result = random_test(iterations, range);
+  f64 quality = random_chi_square_test(iterations, range);
 
-  fprintf(stdout, "test_result: %g, iterations: %u, range: %u\n", test_result, iterations, range);
+  fprintf(stdout, "quality: %g, iterations: %u, range: %u\n", quality, iterations, range);
 
   return 0;
 #endif

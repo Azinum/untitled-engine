@@ -12,7 +12,7 @@ typedef enum Random_type {
   MAX_RANDOM_GENERATOR,
 } Random_type;
 
-f64 random_test(const u32 iterations, const u32 range);
+f64 random_chi_square_test(const u32 iterations, const u32 range);
 
 void random_push_generator(Random_type generator);
 

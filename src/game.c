@@ -3,6 +3,7 @@
 #include "game.h"
 
 #include "common.c"
+#include "hash.c"
 #include "random.c"
 #include "arg_parser.c"
 #include "config.c"
