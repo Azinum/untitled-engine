@@ -26,7 +26,7 @@ static i32 game_run(Game* game);
 
 #define MAP_W 8
 #define MAP_H 8
-u8 map[MAP_H][MAP_W] = {
+static const u8 map[MAP_H][MAP_W] = {
   {1, 1, 1, 1, 1, 1, 1, 1},
   {0, 0, 1, 0, 0, 0, 0, 0},
   {0, 0, 1, 0, 0, 0, 0, 0},

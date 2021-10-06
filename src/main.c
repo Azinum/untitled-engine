@@ -2,10 +2,6 @@
 
 #include "game.c"
 
-#if USE_GTK
-  #include "gtk_test.c"
-#endif
-
 #if _WIN32
   #include "windows_main.c"
 #else
@@ -36,10 +32,6 @@ i32 main(i32 argc, char** argv) {
       zone_memory_free();
     }
     else {
-#if USE_GTK
-      gtk_test_start(argc, argv);
-      gtk_test_exit();
-#endif
       return game_start(argc, argv);
     }
   }

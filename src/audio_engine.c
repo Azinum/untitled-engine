@@ -30,7 +30,7 @@ i32 audio_engine_process(void* out_buffer) {
   f32* out = (f32*)out_buffer;
 
   for (u32 i = 0; i < a->frames_per_buffer; ++i) {
-    *out++ = 0.1f * sinf((i * 110 * 2 * PI32) / a->sample_rate);
+    *out++ = 0;
     *out++ = 0;
   }
   return NO_ERR;
