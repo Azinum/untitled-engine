@@ -14,7 +14,9 @@
 #define DRAW_CALL(call) call; renderer.draw_calls++
 
 u32 quad_vao = 0,
-  quad_vbo = 0;
+  quad_vbo = 0,
+  quad_ibo = 0;
+
 u32 basic_shader = 0,
   diffuse_shader = 0,
   diffuse2_shader = 0;
@@ -45,6 +47,7 @@ static i32 opengl_init();
 static i32 init_state(Renderer* r);
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, const char* attrib_locations, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
+static void upload_quad_data(f32* data, u32 size, u32* indices, u32 index_count, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo, u32* restrict ibo);
 static void upload_texture(Image* texture, u32* texture_id);
 static void upload_model(Mesh* mesh, Model* model);
 static void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, void* data);
@@ -182,6 +185,24 @@ void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32*
   glBindVertexArray(0);
 }
 
+void upload_quad_data(f32* data, u32 size, u32* indices, u32 index_count, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo, u32* restrict ibo) {
+  glGenVertexArrays(1, vao);
+  glBindVertexArray(*vao);
+
+  glGenBuffers(1, vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+  glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+  glEnableVertexArrayAttrib(*vbo, 0);
+  glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_size, (void*)0);
+
+  glGenBuffers(1, ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *ibo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(u32), indices, GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+}
+
 void upload_texture(Image* texture, u32* texture_id) {
   glGenTextures(1, texture_id);
   glBindTexture(GL_TEXTURE_2D, *texture_id);
@@ -242,7 +263,7 @@ void render_texture(const Texture* texture, v3 position, v3 size) {
   glBindTexture(GL_TEXTURE_2D, texture->id);
 
   glBindVertexArray(quad_vao);
-  DRAW_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
+  DRAW_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
   glBindVertexArray(0);
 
   glUseProgram(0);
@@ -286,6 +307,14 @@ void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
   glUseProgram(0);
 }
 
+u32 renderer_push_quad(v3 position, v3 size, v2 uv_offset, v2 uv_range) {
+  return 0;
+}
+
+void renderer_draw_quads() {
+
+}
+
 i32 renderer_upload_mesh(Mesh* mesh) {
   assert(mesh);
   i32 id = -1;
@@ -321,7 +350,7 @@ i32 renderer_init() {
   shader_compile_from_source(diffuse_vert, diffuse_frag, diffuse_attribs, &diffuse_shader);
   shader_compile_from_source(diffuse2_vert, diffuse2_frag, diffuse2_attribs, &diffuse2_shader);
 
-  upload_vertex_data(quad_vertices, sizeof(quad_vertices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo);
+  upload_quad_data(quad_vertices, sizeof(quad_vertices), quad_indices, sizeof(quad_indices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo, &quad_ibo);
   return NO_ERR;
 }
 
