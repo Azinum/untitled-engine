@@ -59,21 +59,19 @@ inline v3 v3_normalize_fast(v3 a) {
 }
 
 inline f32 fast_inv_sqrt(f32 a) {
-  // union { f32 f; i32 i; };
+  union { f32 f; i32 i; } i, y;
+  i.i = 0;
+  y.f = a;
 
-  long i = 0;
-  f32 x2 = 0;
-  f32 y = 0;
-  const float three_halfs = 1.5f;
+  const f32 three_halfs = 1.5f;
+  f32 x2 = a * 0.5f;
 
-  x2 = a * 0.5f;
-  y = a;
-  i = *(long*)&y;
-  i = 0x5f3759df - (i >> 1);
-  y = *(f32*)&i;
-  y = y * (three_halfs - (x2 * y * y));
+  i.f = y.f;
+  i.i = 0x5f3759df - (i.i >> 1);
+  y.i = i.i;
 
-  return y;
+  y.f = y.f * (three_halfs - (x2 * y.f * y.f));
+  return y.f;
 }
 
 inline float lerp(float v0, float v1, float t) {

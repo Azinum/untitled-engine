@@ -371,6 +371,7 @@ void renderer_end_frame(u8 r, u8 g, u8 b) {
 void renderer_free() {
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
+  glDeleteBuffers(1, &quad_ibo);
   glDeleteProgram(basic_shader);
   glDeleteProgram(diffuse_shader);
   glDeleteProgram(diffuse2_shader);
