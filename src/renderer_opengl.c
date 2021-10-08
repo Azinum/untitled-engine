@@ -41,6 +41,20 @@ typedef struct Model {
 #define MAX_MODEL 32
 #define MAX_TEXTURE 32
 
+#define MAX_BATCH 4
+
+typedef struct Batch_renderer {
+  f32* vertex_data;
+  u32* index_data;
+
+  u32 vertex_data_size;
+  u32 index_data_size;
+
+  u32 vao;
+  u32 vbo;
+  u32 ibo;
+} Batch_renderer;
+
 typedef struct Renderer {
   u32 draw_calls;
 
@@ -49,6 +63,9 @@ typedef struct Renderer {
 
   u32 textures[MAX_TEXTURE];
   u32 texture_count;
+
+  Batch_renderer batches[MAX_BATCH];
+  u32 batch_count;
 
   f32* quad_vertex_data;
   u32* quad_index_data;
@@ -106,6 +123,9 @@ i32 init_state(Renderer* r) {
   r->draw_calls = 0;
   r->model_count = 0;
   r->texture_count = 0;
+
+  r->batch_count = 0;
+
   r->quad_vertex_data = NULL;
   r->quad_index_data = NULL;
   r->quad_data_size = 0;
@@ -510,6 +530,15 @@ void renderer_free() {
   glDeleteProgram(basic_shader);
   glDeleteProgram(diffuse_shader);
   glDeleteProgram(diffuse2_shader);
+
+  for (u32 i = 0; i < r->batch_count; ++i) {
+    Batch_renderer* batch = &r->batches[i];
+    glDeleteVertexArrays(1, &batch->vao);
+    glDeleteVertexArrays(1, &batch->vbo);
+    glDeleteBuffers(1, &batch->ibo);
+    zone_free(batch->vertex_data);
+    zone_free(batch->index_data);
+  }
 
   for (u32 i = 0; i < r->model_count; ++i) {
     Model* model = &r->models[i];
