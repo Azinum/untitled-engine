@@ -172,7 +172,6 @@ i32 game_run(Game* game) {
       }
     }
     renderer_push_quad(V3(0, 0, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));
-    renderer_push_quad(V3(1, 1, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));
     renderer_draw();
     renderer_end_frame(30, 30, 30);
   }

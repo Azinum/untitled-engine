@@ -28,6 +28,7 @@ u32 quad_vao = 0,
   quad_ibo = 0;
 
 u32 basic_shader = 0,
+  sprite_shader = 0,
   diffuse_shader = 0,
   diffuse2_shader = 0;
 
@@ -38,21 +39,27 @@ typedef struct Model {
   u32 ebo;
 } Model;
 
+typedef enum Batch_type {
+  BATCH_QUAD = 0,
+
+  MAX_BATCH,
+} Batch_type;
+
 #define MAX_MODEL 32
 #define MAX_TEXTURE 32
-
-#define MAX_BATCH 4
 
 typedef struct Batch_renderer {
   f32* vertex_data;
   u32* index_data;
 
   u32 vertex_data_size;
-  u32 index_data_size;
+  u32 index_count;
 
   u32 vao;
   u32 vbo;
   u32 ibo;
+
+  u32 texture_id;
 } Batch_renderer;
 
 typedef struct Renderer {
@@ -87,6 +94,9 @@ static void upload_quad_data(f32* data, u32 size, u32* indices, u32 index_count,
 static void upload_texture(Image* texture, u32* texture_id);
 static void upload_model(Mesh* mesh, Model* model);
 static void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, void* data);
+
+static void batch_init(Batch_renderer* batch, u32 vertex_data_size, u32 index_data_size);
+static void draw_quad_batch(Batch_renderer* batch);
 
 i32 opengl_init() {
   i32 glew_err = glewInit();
@@ -330,6 +340,42 @@ void store_attribute(Model* model, i32 attribute_index, u32 count, u32 size, voi
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void batch_init(Batch_renderer* batch, u32 vertex_data_size, u32 index_data_size) {
+  batch->vertex_data = zone_malloc(vertex_data_size);
+  batch->index_data = zone_malloc(index_data_size);
+  batch->vertex_data_size = 0;
+  batch->index_count = 0;
+  batch->vao = 0;
+  batch->vbo = 0;
+  batch->ibo = 0;
+  batch->texture_id = 0;
+}
+
+void draw_quad_batch(Batch_renderer* batch) {
+  glBindBuffer(GL_ARRAY_BUFFER, batch->vbo);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, batch->vertex_data_size, &batch->vertex_data[0]);
+
+  u32 handle = basic_shader;
+  glUseProgram(handle);
+
+  model = translate(V3(0, 0, 0));
+
+  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&orthogonal_proj);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, batch->texture_id);
+
+  glBindVertexArray(batch->vao);
+  DRAW_CALL(glDrawElements(GL_TRIANGLES, batch->index_count, GL_UNSIGNED_INT, 0));
+  glBindVertexArray(0);
+
+  glUseProgram(0);
+
+  batch->vertex_data_size = 0;
+  batch->index_count = 0;
+}
+
 void render_texture(const Texture* texture, v3 position, v3 size) {
   u32 handle = basic_shader;
   glUseProgram(handle);
@@ -432,7 +478,7 @@ void renderer_draw() {
   glBindBuffer(GL_ARRAY_BUFFER, r->quad_vbo);
   glBufferSubData(GL_ARRAY_BUFFER, 0, r->quad_data_size, &r->quad_vertex_data[0]);
 
-  u32 handle = basic_shader;
+  u32 handle = sprite_shader;
   glUseProgram(handle);
 
   model = translate(V3(0, 0, 0));
@@ -492,7 +538,8 @@ i32 renderer_init() {
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
 
-  shader_compile_from_source(sprite_vert, sprite_frag, NULL, &basic_shader);
+  shader_compile_from_source(basic_vert, basic_frag, NULL, &basic_shader);
+  shader_compile_from_source(sprite_vert, sprite_frag, NULL, &sprite_shader);
   shader_compile_from_source(diffuse_vert, diffuse_frag, diffuse_attribs, &diffuse_shader);
   shader_compile_from_source(diffuse2_vert, diffuse2_frag, diffuse2_attribs, &diffuse2_shader);
 
@@ -528,6 +575,7 @@ void renderer_free() {
   glDeleteBuffers(1, &r->quad_ibo);
 
   glDeleteProgram(basic_shader);
+  glDeleteProgram(sprite_shader);
   glDeleteProgram(diffuse_shader);
   glDeleteProgram(diffuse2_shader);
 
