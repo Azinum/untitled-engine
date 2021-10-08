@@ -13,6 +13,16 @@
 
 #define DRAW_CALL(call) call; renderer.draw_calls++
 
+#define NUM_INDEX_PER_QUAD 6
+
+// WOW, need to clean this up!
+#define QUAD_COUNT (512)
+#define VERTEX_PER_QUAD (4)
+#define ATTR_COUNT_PER_VERTEX (4)
+#define QUAD_VERTEX_SIZE (sizeof(f32) * ATTR_COUNT_PER_VERTEX)
+#define QUAD_DATA_SIZE (QUAD_COUNT * VERTEX_PER_QUAD * QUAD_VERTEX_SIZE)
+#define QUAD_INDEX_COUNT (QUAD_COUNT * 6)
+
 u32 quad_vao = 0,
   quad_vbo = 0,
   quad_ibo = 0;
@@ -39,12 +49,21 @@ typedef struct Renderer {
 
   u32 textures[MAX_TEXTURE];
   u32 texture_count;
+
+  f32* quad_vertex_data;
+  u32* quad_index_data;
+  u32 quad_data_size;
+  u32 quad_index_count;
+  u32 quad_vao;
+  u32 quad_vbo;
+  u32 quad_ibo;
 } Renderer;
 
 Renderer renderer;
 
 static i32 opengl_init();
 static i32 init_state(Renderer* r);
+static i32 init_quad_renderer(Renderer* r);
 static i32 shader_compile_from_source(const char* vert_source, const char* frag_source, const char* attrib_locations, u32* program_out);
 static void upload_vertex_data(f32* data, u32 size, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo);
 static void upload_quad_data(f32* data, u32 size, u32* indices, u32 index_count, u32 attr_size, u32 attr_count, u32* restrict vao, u32* restrict vbo, u32* restrict ibo);
@@ -87,6 +106,54 @@ i32 init_state(Renderer* r) {
   r->draw_calls = 0;
   r->model_count = 0;
   r->texture_count = 0;
+  r->quad_vertex_data = NULL;
+  r->quad_index_data = NULL;
+  r->quad_data_size = 0;
+  r->quad_index_count = 0;
+  r->quad_vao = 0;
+  r->quad_vbo = 0;
+  r->quad_ibo = 0;
+  return NO_ERR;
+}
+
+i32 init_quad_renderer(Renderer* r) {
+  r->quad_vertex_data = zone_malloc(QUAD_DATA_SIZE);
+  r->quad_index_data = zone_malloc(QUAD_INDEX_COUNT * sizeof(u32));
+  r->quad_data_size = 0;
+  r->quad_index_count = 0;
+
+  const u32 attr_count = 4;
+
+  glGenVertexArrays(1, &r->quad_vao);
+  glBindVertexArray(r->quad_vao);
+
+  glGenBuffers(1, &r->quad_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, r->quad_vbo);
+  glBufferData(GL_ARRAY_BUFFER, QUAD_DATA_SIZE, NULL, GL_DYNAMIC_DRAW);
+
+  glEnableVertexArrayAttrib(r->quad_vao, 0);
+  glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_count * sizeof(f32), (void*)0);
+
+  u32* index_data = &r->quad_index_data[0];
+  u32 offset = 0;
+  for (u32 i = 0; i < QUAD_INDEX_COUNT / NUM_INDEX_PER_QUAD; i += NUM_INDEX_PER_QUAD) {
+    *index_data++ = 0 + offset;
+    *index_data++ = 1 + offset;
+    *index_data++ = 2 + offset;
+
+    *index_data++ = 0 + offset;
+    *index_data++ = 3 + offset;
+    *index_data++ = 1 + offset;
+
+    offset += 4;
+  }
+
+  glGenBuffers(1, &r->quad_ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, r->quad_ibo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, QUAD_INDEX_COUNT * sizeof(u32), &r->quad_index_data[0], GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+
   return NO_ERR;
 }
 
@@ -193,7 +260,7 @@ void upload_quad_data(f32* data, u32 size, u32* indices, u32 index_count, u32 at
   glBindBuffer(GL_ARRAY_BUFFER, *vbo);
   glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 
-  glEnableVertexArrayAttrib(*vbo, 0);
+  glEnableVertexArrayAttrib(*vao, 0);
   glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_size, (void*)0);
 
   glGenBuffers(1, ibo);
@@ -308,11 +375,69 @@ void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
 }
 
 u32 renderer_push_quad(v3 position, v3 size, v2 uv_offset, v2 uv_range) {
+  Renderer* r = &renderer;
+
+  if (r->quad_index_count >= QUAD_INDEX_COUNT) {
+    renderer_draw();
+  }
+
+  f32 quad[ARR_SIZE(quad_vertices)];
+  memory_copy(quad, quad_vertices, sizeof(quad));
+
+  quad[0 + 0 * ATTR_COUNT_PER_VERTEX] += position.x * size.x;
+  quad[1 + 0 * ATTR_COUNT_PER_VERTEX] += position.y * size.y;
+
+  quad[0 + 1 * ATTR_COUNT_PER_VERTEX] += position.x * size.x;
+  quad[1 + 1 * ATTR_COUNT_PER_VERTEX] += position.y * size.y;
+
+  quad[0 + 2 * ATTR_COUNT_PER_VERTEX] += position.x * size.x;
+  quad[1 + 2 * ATTR_COUNT_PER_VERTEX] += position.y * size.y;
+
+  quad[0 + 3 * ATTR_COUNT_PER_VERTEX] += position.x * size.x;
+  quad[1 + 3 * ATTR_COUNT_PER_VERTEX] += position.y * size.y;
+
+  u8* vertex_data = (u8*)&r->quad_vertex_data[0];
+
+  memory_copy(&vertex_data[r->quad_data_size], quad, sizeof(quad));
+
+  r->quad_data_size += 4 * QUAD_VERTEX_SIZE;
+  r->quad_index_count += NUM_INDEX_PER_QUAD;
+
   return 0;
 }
 
-void renderer_draw_quads() {
+void renderer_draw() {
+  Renderer* r = &renderer;
 
+  glBindBuffer(GL_ARRAY_BUFFER, r->quad_vbo);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, r->quad_data_size, &r->quad_vertex_data[0]);
+
+  u32 handle = basic_shader;
+  glUseProgram(handle);
+
+  model = translate(V3(0, 0, 0));
+  model = m4_multiply(model, scale(V3(160*3, 8*3, 1)));
+
+  glUniformMatrix4fv(glGetUniformLocation(handle, "projection"), 1, GL_FALSE, (f32*)&orthogonal_proj);
+  glUniformMatrix4fv(glGetUniformLocation(handle, "model"), 1, GL_FALSE, (f32*)&model);
+
+  v2 offset = V2(0, 0);
+  v2 range = V2(1, 1);
+
+  glUniform2f(glGetUniformLocation(handle, "offset"), offset.x, offset.y);
+  glUniform2f(glGetUniformLocation(handle, "range"), range.x, range.y);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, 2);
+
+  glBindVertexArray(r->quad_vao);
+  DRAW_CALL(glDrawElements(GL_TRIANGLES, r->quad_index_count, GL_UNSIGNED_INT, 0));
+  glBindVertexArray(0);
+
+  glUseProgram(0);
+
+  r->quad_data_size = 0;
+  r->quad_index_count = 0;
 }
 
 i32 renderer_upload_mesh(Mesh* mesh) {
@@ -342,6 +467,7 @@ i32 renderer_upload_texture(Image* source, Texture* texture) {
 i32 renderer_init() {
   opengl_init();
   init_state(&renderer);
+  init_quad_renderer(&renderer);
 
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
@@ -360,6 +486,8 @@ u32 renderer_num_draw_calls() {
 
 void renderer_begin_frame() {
   renderer.draw_calls = 0;
+  renderer.quad_data_size = 0;
+  renderer.quad_index_count = 0;
 }
 
 void renderer_end_frame(u8 r, u8 g, u8 b) {
@@ -369,21 +497,32 @@ void renderer_end_frame(u8 r, u8 g, u8 b) {
 }
 
 void renderer_free() {
+  Renderer* r = &renderer;
+
   glDeleteVertexArrays(1, &quad_vao);
   glDeleteVertexArrays(1, &quad_vbo);
   glDeleteBuffers(1, &quad_ibo);
+
+  glDeleteVertexArrays(1, &r->quad_vao);
+  glDeleteVertexArrays(1, &r->quad_vbo);
+  glDeleteBuffers(1, &r->quad_ibo);
+
   glDeleteProgram(basic_shader);
   glDeleteProgram(diffuse_shader);
   glDeleteProgram(diffuse2_shader);
 
-  for (u32 i = 0; i < renderer.model_count; ++i) {
-    Model* model = &renderer.models[i];
+  for (u32 i = 0; i < r->model_count; ++i) {
+    Model* model = &r->models[i];
     glDeleteVertexArrays(1, &model->vao);
     glDeleteVertexArrays(1, &model->vbo);
     glDeleteBuffers(1, &model->ebo);
   }
-  for (u32 i = 0; i < renderer.texture_count; ++i) {
-    u32* texture = &renderer.textures[i];
+  for (u32 i = 0; i < r->texture_count; ++i) {
+    u32* texture = &r->textures[i];
     glDeleteTextures(1, texture);
   }
+  zone_free(r->quad_vertex_data);
+  zone_free(r->quad_index_data);
+  r->quad_data_size = 0;
+  r->quad_index_count = 0;
 }

@@ -12,7 +12,7 @@ u32 renderer_push_quad(v3 position, v3 size, v2 uv_offset, v2 uv_range) {
   return 0;
 }
 
-void renderer_draw_quads() {
+void renderer_draw() {
 
 }
 
