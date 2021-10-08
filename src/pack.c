@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <dirent.h>
 
+#include "pack_file.c"
+
 #define PACK_HEADER_MAGIC 0xffff0001
 #define STRUCT_ALIGNMENT 4
 #define FILE_NAME_LENGTH 32
@@ -352,6 +354,20 @@ i32 unpack(const char* path) {
 i32 read_pack_file(const char* path, const char* pack_file, Buffer* buffer) {
   assert(path && pack_file);
   i32 result = NO_ERR;
+
+  FILE* pack_fp = fopen(pack_file, "rb");
+  if (!pack_fp) {
+#ifdef HAS_PACK_FILE
+    FILE* fp = fopen(pack_file, "w");
+    if (fp) {
+      fwrite(data_pack, ARR_SIZE(data_pack), 1, fp);
+      fclose(fp);
+    }
+#endif
+  }
+  else {
+    fclose(pack_fp);
+  }
 
   Pack_state pack_state = {0};
   if ((result = pack_read_state_init(&pack_state, pack_file)) == NO_ERR) {
