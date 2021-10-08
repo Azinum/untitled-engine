@@ -5,6 +5,5 @@
 [ -f $1 ] || exit 1
 
 printf "// pack_file.c\n\n"
-printf "#define HAS_PACK_FILE\n\n"
 
-bintoc $1 $2 2> /dev/null
+bintoc $1 $2 && printf "\n#define HAS_PACK_FILE\n" 2> /dev/null
