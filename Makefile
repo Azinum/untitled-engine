@@ -11,7 +11,7 @@ all: compile pack run
 
 prepare:
 	mkdir -p ${BUILD}
-	${MAKE} -C shader run
+	${MAKE} -C shader
 	-./tools/pack/pack.sh build/data.pack data_pack > src/pack_file.c 2> /dev/null
 
 compile: prepare

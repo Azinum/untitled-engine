@@ -8,7 +8,7 @@ FLAGS=-o ${PROG} -Wall -O3
 
 SRC=shader_compile.c
 
-all: compile
+all: compile run
 
 prepare:
 
