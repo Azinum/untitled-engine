@@ -1,13 +1,13 @@
 # Makefile
 
 ifeq ("${wildcard config.mk}", "")
-$(shell cp default.mk config.mk)
+	$(shell cp default.mk config.mk)
 endif
 
 include config.mk
 include common.mk
 
-all: compile pack run
+all: compile pack
 
 prepare:
 	mkdir -p ${BUILD}

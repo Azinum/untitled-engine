@@ -20,6 +20,13 @@ typedef uint16_t u16;
 typedef int8_t i8;
 typedef uint8_t u8;
 
+enum Error_code {
+  ERR = -1,
+  NO_ERR = 0,
+
+  MAX_ERR_CODE,
+};
+
 #define ARR_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
 #define MAX_PATH_SIZE 512
 
@@ -30,13 +37,6 @@ typedef uint8_t u8;
 }
 
 #define MAX_LINE_SIZE 256
-
-enum Error_code {
-  ERR = -1,
-  NO_ERR = 0,
-
-  MAX_ERR_CODE,
-};
 
 #define KB(n) (n * 1024)
 #define MB(n) (KB(n * 1024))
@@ -52,6 +52,27 @@ typedef struct Buffer {
 #else
   #include <x86intrin.h>
 #endif
+
+#define USE_TIMER 1
+
+#if USE_TIMER
+  #define TIMER_START(...) \
+    clock_t _time_end = 0; \
+    clock_t _time_start = clock(); \
+    __VA_ARGS__
+
+  #define TIMER_END(...) { \
+    _time_end = clock(); \
+    f64 _delta_time = ((f64) (_time_end - _time_start)) / CLOCKS_PER_SEC; \
+    __VA_ARGS__ \
+  }
+#else
+
+  #define TIMER_START(...)
+
+  #define TIMER_END(...)
+
+#endif // USE_TIMER
 
 void buffer_free(Buffer* buffer);
 

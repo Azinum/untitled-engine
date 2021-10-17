@@ -14,6 +14,7 @@
 #include "math_util.h"
 #include "image.h"
 #include "bmp.h"
+#include "ppm.h"
 #include "mesh.h"
 #include "audio_engine.h"
 #include "renderer.h"

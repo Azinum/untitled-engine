@@ -13,6 +13,7 @@
 #include "math_util.c"
 #include "image.c"
 #include "bmp.c"
+#include "ppm.c"
 #include "mesh.c"
 #include "audio_engine.c"
 #include "renderer.c"

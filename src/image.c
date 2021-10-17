@@ -29,6 +29,10 @@ i32 image_init(i32 width, i32 height, u16 bytes_per_pixel, Image* image) {
   return NO_ERR;
 }
 
+void* image_fetch_pixel(u32 x, u32 y, Image* image) {
+  return &image->data[(y * image->width + x) * image->bytes_per_pixel];
+}
+
 i32 image_load_from_buffer(const char* ext, Image* image, Buffer* buffer) {
   i32 result = ERR;
 
@@ -36,7 +40,7 @@ i32 image_load_from_buffer(const char* ext, Image* image, Buffer* buffer) {
     result = bmp_load(image, buffer);
   }
   else {
-    fprintf(stderr, "Image format %s not supported for file\n", ext);
+    fprintf(stderr, "image_load_from_buffer: Image format '%s' not supported for file\n", ext);
   }
   return result;
 }
@@ -47,6 +51,18 @@ i32 image_load(const char* path, Image* image) {
   if ((result = read_file(path, &buffer)) == NO_ERR) {
     result = image_load_from_buffer(get_extension(path), image, &buffer);
     buffer_free(&buffer);
+  }
+  return result;
+}
+
+i32 image_write(const char* path, Image* image) {
+  i32 result = ERR;
+  char* ext = get_extension(path);
+  if (!string_cmp(ext, "ppm")) {
+    result = ppm_write(path, image);
+  }
+  else {
+    fprintf(stderr, "image_write: Image format '%s' not supported for file\n", ext);
   }
   return result;
 }
