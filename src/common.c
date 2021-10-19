@@ -19,10 +19,21 @@ u32 buffer_iterate(void* restrict dest, Buffer* source, u32 size, u32* iter) {
 }
 
 void* memory_copy(void* restrict dest, const void* restrict source, const u32 size) {
+#if USE_SSE
+  if (!(size % sizeof(__m128))) {
+    __m128* d4 = (__m128*)dest;
+    __m128* s4 = (__m128*)source;
+    const u32 chunk_count = size / sizeof(__m128);
+    for (u32 index = 0; index < chunk_count; ++index) {
+      _mm_store_ps((f32*)d4++, *s4++);
+    }
+    return dest;
+  }
+#endif
   u8* d = (u8*)dest;
   u8* s = (u8*)source;
   for (u32 index = 0; index < size; ++index, *d++ = *s++);
-  return d;
+  return dest;
 }
 
 void memory_zero(void* restrict dest, const u32 size) {
@@ -30,6 +41,17 @@ void memory_zero(void* restrict dest, const u32 size) {
 }
 
 void memory_set(void* restrict dest, const u8 value, const u32 size) {
+#if USE_SSE
+  if (!(size % sizeof(__m128))) {
+    __m128i* d4 = (__m128i*)dest;
+    __m128i v = _mm_set1_epi8(value);
+    const u32 chunk_count = size / sizeof(__m128);
+    for (u32 index = 0; index < chunk_count; ++index) {
+      _mm_stream_si128(d4++, v);
+    }
+    return;
+  }
+#endif
   u8* d = (u8*)dest;
   for (u32 index = 0; index < size; ++index, *d++ = value);
 }

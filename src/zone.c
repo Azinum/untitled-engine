@@ -3,6 +3,7 @@
 
 #define ALIGNMENT 16
 #define ALIGN(n) ((n % ALIGNMENT) ? (n + ALIGNMENT - (n % ALIGNMENT)) : n)
+#define SWEEP_ON_FREE 1
 
 typedef struct Zone {
   u8* data;
@@ -249,8 +250,6 @@ size_t zone_free(void* p) {
   }
   header->tag = TAG_BLOCK_FREE;
   zone->total_alloc -= header->size;
-
-#define SWEEP_ON_FREE 1
 #if SWEEP_ON_FREE
   zone_sweep();
 #endif
