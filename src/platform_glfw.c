@@ -134,6 +134,10 @@ void platform_swap_buffers() {
   glfwSwapBuffers(window.window);
 }
 
+i32 platform_window_should_close() {
+  return glfwWindowShouldClose(window.window);
+}
+
 i32 platform_window_width() {
   return window.width;
 }

@@ -84,7 +84,7 @@ i32 game_run(Game* game) {
   f64 now = 0;
   f64 last = 0;
 
-  while (game->running && platform_handle_events() >= 0) {
+  while (game->running && platform_handle_events() >= 0 && !platform_window_should_close()) {
     last = now;
     now = platform_get_time();
     game->dt = now - last;

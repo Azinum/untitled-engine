@@ -161,7 +161,7 @@ i32 init_quad_renderer(Renderer* r) {
   glBindBuffer(GL_ARRAY_BUFFER, r->quad_vbo);
   glBufferData(GL_ARRAY_BUFFER, QUAD_DATA_SIZE, NULL, GL_DYNAMIC_DRAW);
 
-  glEnableVertexArrayAttrib(r->quad_vao, 0);
+  glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, attr_count, GL_FLOAT, GL_FALSE, attr_count * sizeof(f32), (void*)0);
 
   u32* index_data = &r->quad_index_data[0];

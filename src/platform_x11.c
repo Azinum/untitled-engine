@@ -37,6 +37,10 @@ void platform_swap_buffers() {
 
 }
 
+i32 platform_window_should_close() {
+  return 0;
+}
+
 i32 platform_window_width() {
   return 0;
 }
