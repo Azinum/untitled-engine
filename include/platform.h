@@ -73,6 +73,8 @@ void platform_swap_buffers();
 
 i32 platform_window_should_close();
 
+i32 platform_window_size(i32* width, i32* height);
+
 i32 platform_window_width();
 
 i32 platform_window_height();

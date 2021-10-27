@@ -41,6 +41,9 @@ ifeq (${PLATFORM}, LINUX)
 	else ifeq (${USE_GLFW}, 1)
 		LIBS+=-lglfw
 		FLAGS+=-D USE_GLFW
+	else ifeq (${USE_TERM}, 1)
+		LIBS+=-lncurses
+		FLAGS+=-D USE_TERM
 	endif
 	ifeq (${USE_OPENGL}, 1)
 		LIBS+=-lGLEW -lGL -lGLU

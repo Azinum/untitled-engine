@@ -138,6 +138,12 @@ i32 platform_window_should_close() {
   return glfwWindowShouldClose(window.window);
 }
 
+i32 platform_window_size(i32* width, i32* height) {
+  *width = window.width;
+  *height = window.width;
+  return NO_ERR;
+}
+
 i32 platform_window_width() {
   return window.width;
 }
