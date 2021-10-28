@@ -147,8 +147,8 @@ i32 game_run(Game* game) {
     }
     if (key_pressed[KEY_X]) {
       camera.target.y += 1;
+      printf("camera.target.y = %g; ", camera.target.y);
     }
-
     camera.pos = V3(
       lerp(camera.pos.x, camera.target.x, 50.0f * game->dt),
       lerp(camera.pos.y, camera.target.y, 50.0f * game->dt),

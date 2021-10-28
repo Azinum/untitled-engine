@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 
-Keycode KEY_ESCAPE = 0xfe;
+Keycode KEY_ESCAPE = 27;
 Keycode KEY_0 = '0';
 Keycode KEY_1 = '1';
 Keycode KEY_2 = '2';
@@ -103,9 +103,21 @@ f64 platform_get_time() {
 }
 
 i32 platform_handle_events() {
-  i32 event = 0;
-  event = getch();
-  return 0;
+  memory_zero(&key_pressed[0], sizeof(key_pressed));
+  memory_zero(&key_down[0], sizeof(key_down));
+
+  i32 event = getc(stdin);
+  for (i32 key_index = 0; key_index < MAX_KEY; ++key_index) {
+    if (event == key_index) {
+      key_pressed[key_index] = !key_down[key_index];
+      key_down[key_index] = 1;
+    }
+    else {
+      key_down[key_index] = 0;
+      key_pressed[key_index] = 0;
+    }
+  }
+  return -(event == 4); // ^D
 }
 
 void platform_swap_buffers() {
