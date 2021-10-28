@@ -1,0 +1,19 @@
+- Strict aliasing
+	- Strict aliasing makes dereferencing from one type of object to another incompatable type illegal.
+- Restrict keyword
+	- Enforces aliasing rules.
+- Pedantic
+	- Turns off extensions and gives more warnings related to which compiler dialect you are using.
+- __rdtsc
+	- Read the number of cpu reference cycles.
+	- More info at https://stackoverflow.com/questions/9887839/how-to-count-clock-cycles-with-rdtsc-in-gcc-x86/51907425#51907425
+- taskset
+	- Pin program or thread to a specific core
+	- Example: taskset -c 0 ./build/game
+- Linear congruent generator
+- Metropolis algorithm (monte carlo)
+- Chi-squared distribution
+	- Sum the squares of a set of random numbers
+	- More info: https://en.wikipedia.org/wiki/Chi-squared_distribution, testing a distribution: https://en.wikipedia.org/wiki/Pearson's_chi-squared_test
+- Degrees of freedom
+- Markov property
