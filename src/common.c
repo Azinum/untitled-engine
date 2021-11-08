@@ -41,7 +41,8 @@ void memory_zero(void* restrict dest, const u32 size) {
 }
 
 void memory_set(void* restrict dest, const u8 value, const u32 size) {
-#if USE_SSE
+#if USE_SSE && 0
+  // FIXME: SIMD badness!!
   if (!(size % sizeof(__m128))) {
     __m128i* d4 = (__m128i*)dest;
     __m128i v = _mm_set1_epi8(value);

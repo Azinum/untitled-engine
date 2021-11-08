@@ -89,7 +89,7 @@ i32 mesh_load(const char* path, Mesh* mesh) {
 }
 
 void mesh_unload(Mesh* mesh) {
-  if (mesh->data) {
+  if (mesh->data != NULL) {
     zone_free(mesh->data);
   }
   else {
