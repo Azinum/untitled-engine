@@ -171,10 +171,12 @@ i32 game_run(Game* game) {
         render_model(cube_id, &ground_texture, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
       }
     }
-    renderer_push_quad(V3(0, 0, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));
-    renderer_draw();
+    // renderer_push_quad(V3(0, 0, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));
+    // renderer_draw();
     renderer_end_frame(30, 30, 30);
-    platform_swap_buffers();
+#if USE_TERM // NOTE(lucas): TEMPORARY!!
+    platform_swap_buffers(); // Specific for the terminal based renderer/platform layer
+#endif
   }
   return NO_ERR;
 }

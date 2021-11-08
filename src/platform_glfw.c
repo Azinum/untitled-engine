@@ -98,7 +98,7 @@ i32 platform_open_window(i32 width, i32 height, u8 vsync, u8 fullscreen, u8 resi
   glfwSetFramebufferSizeCallback(window.window, framebuffer_callback);
   glfwMakeContextCurrent(window.window);
 
-  glfwSwapInterval(vsync ? 1 : 0);
+  glfwSwapInterval(vsync == 1);
   return NO_ERR;
 }
 
