@@ -2,7 +2,7 @@
 
 #include "game.c"
 
-#if _WIN32
+#if _WIN32 && 0
   #include "windows_main.c"
 #else
 

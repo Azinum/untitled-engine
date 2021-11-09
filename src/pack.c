@@ -76,7 +76,12 @@ static void pack_print_hierarchy(Pack_state* p, Dir_entry* dir_entry, u32 level,
 
 i32 pack_state_init(Pack_state* p, const char* path) {
   i32 result = NO_ERR;
-  i32 flags = O_CREAT | O_TRUNC | O_RDWR | O_SYNC;
+  i32 flags = 0;
+#if _WIN32
+  flags = O_CREAT | O_TRUNC | O_RDWR;
+#else
+  flags = O_CREAT | O_TRUNC | O_RDWR | O_SYNC; // NOTE(lucas): Not sure if O_SYNC is really needed
+#endif
   i32 fd = open(path, flags, 0664); // rw, rw, r
   if (fd < 0) {
     fprintf(stderr, "pack_state_init: Failed to open file '%s'\n", path);

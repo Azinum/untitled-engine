@@ -14,7 +14,6 @@ prepare:
 
 compile: prepare
 	${CC} ${SRC} ${FLAGS}
-	strip ${PROG}
 
 run:
 	./compile.sh

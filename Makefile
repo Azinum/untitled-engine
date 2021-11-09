@@ -10,9 +10,11 @@ include common.mk
 all: compile pack
 
 prepare:
+ifneq (${PLATFORM}, WINDOWS)
 	mkdir -p ${BUILD}
 	${MAKE} -C shader
 	-./tools/pack/pack.sh build/data.pack data_pack > src/pack_file.c 2> /dev/null
+endif
 
 compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
