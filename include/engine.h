@@ -1,7 +1,7 @@
-// game.h
+// engine.h
 
-#ifndef _GAME_H
-#define _GAME_H
+#ifndef _ENGINE_H
+#define _ENGINE_H
 
 #include "common.h"
 #include "hash.h"
@@ -34,6 +34,4 @@ typedef struct Game {
   f64 total_time;
 } Game;
 
-i32 game_start(i32 argc, char** argv);
-
-#endif
+#endif // _ENGINE_H

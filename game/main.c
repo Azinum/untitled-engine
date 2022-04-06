@@ -1,8 +1,8 @@
 // main.c
 
-// #include "game.c"
+#include "../src/engine.c"
 
-#include "engine.c"
+#include "game.c"
 
 #if _WIN32
   #include "windows_main.c"
@@ -34,10 +34,10 @@ i32 main(i32 argc, char** argv) {
       zone_memory_free();
     }
     else {
-      // return game_start(argc, argv);
+      return game_start(argc, argv);
     }
   }
   return result;
 }
 
-#endif
+#endif // _WIN32

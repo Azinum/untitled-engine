@@ -35,7 +35,6 @@ i32 open_stream(Audio_engine* a) {
 
 i32 stereo_callback(const void* in_buffer, void* out_buffer, unsigned long frames_per_buffer, const PaStreamCallbackTimeInfo* time_info, PaStreamCallbackFlags flags, void* user_data) {
   if (audio_engine_process(out_buffer) == NO_ERR) {
-    audio_engine_process(out_buffer);
     return paContinue;
   }
   return paComplete;

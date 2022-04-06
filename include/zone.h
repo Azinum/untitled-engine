@@ -3,7 +3,7 @@
 #ifndef _ZONE_H
 #define _ZONE_H
 
-i32 zone_memory_init(const size_t size, const size_t temp_size);
+i32 zone_memory_init(const size_t size);
 
 void zone_print_all(FILE* fp);
 

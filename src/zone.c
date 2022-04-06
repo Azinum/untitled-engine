@@ -141,9 +141,9 @@ done:
   return data;
 }
 
-i32 zone_memory_init(size_t size, size_t temp_size) {
+i32 zone_memory_init(size_t size) {
   zone_init(&zones[ZONE_DEFAULT], size);
-  zone_init(&zones[ZONE_TEMP], temp_size);
+  zone_init(&zones[ZONE_TEMP], MB(2));
   return NO_ERR;
 }
 

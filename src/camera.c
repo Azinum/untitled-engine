@@ -10,7 +10,7 @@ void camera_init(v3 pos, Projection mode) {
   camera.right = V3(1, 0, 0);
   camera.forward = V3(0, 0, 1);
 
-  camera.pitch = 180;
+  camera.pitch = -80;
   camera.yaw = 90;
   camera.roll = 0;
 

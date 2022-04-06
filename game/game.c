@@ -2,25 +2,6 @@
 
 #include "game.h"
 
-#include "common.c"
-#include "hash.c"
-#include "random.c"
-#include "arg_parser.c"
-#include "config.c"
-#include "memory.c"
-#include "zone.c"
-#include "pack.c"
-#include "math_util.c"
-#include "image.c"
-#include "bmp.c"
-#include "ppm.c"
-#include "mesh.c"
-#include "audio_engine.c"
-#include "renderer.c"
-#include "camera.c"
-#include "platform.c"
-#include "entity.c"
-
 #define MAX_TITLE_SIZE 128
 #define SEED 811
 
@@ -42,7 +23,7 @@ i32 game_state_init(Game* game) {
   game->dt = 0;
   game->total_time = 0;
 
-  camera_init(V3(3, 0, 3), PERSPECTIVE);
+  camera_init(V3(3, 7, 3), PERSPECTIVE);
 
   for (i32 y = 0; y < MAP_H; ++y) {
     for (i32 x = 0; x < MAP_W; ++x) {
@@ -115,17 +96,33 @@ i32 game_run(Game* game) {
       camera_set_projection_mode(ORTHOGONAL);
     }
     if (key_pressed[KEY_A]) {
-      camera.yaw -= 90;
+      camera.target = V3_OP(
+        V3(
+          1,
+          0,
+          0
+        ),
+        camera.target,
+        +
+      );
     }
     if (key_pressed[KEY_D]) {
-      camera.yaw += 90;
+      camera.target = V3_OP(
+        V3(
+          -1,
+          0,
+          0
+        ),
+        camera.target,
+        +
+      );
     }
     if (key_pressed[KEY_W]) {
       camera.target = V3_OP(
         V3(
-          camera.forward.x,
           0,
-          camera.forward.z
+          0,
+          1
         ),
         camera.target,
         +
@@ -134,9 +131,9 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_S]) {
       camera.target = V3_OP(
         V3(
-          -camera.forward.x,
           0,
-          -camera.forward.z
+          0,
+          -1
         ),
         camera.target,
         +
@@ -167,22 +164,18 @@ i32 game_run(Game* game) {
         if (value) {
           render_model(cube_id, &ground_texture, pos, V3(1, 1, 1));
         }
-        render_model(cube_id, &ground_texture, V3(pos.x, pos.y + 1, pos.z), V3(1, 1, 1));
         render_model(cube_id, &ground_texture, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
       }
     }
     // renderer_push_quad(V3(0, 0, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));
     // renderer_draw();
     renderer_end_frame(30, 30, 30);
-#if USE_TERM // NOTE(lucas): TEMPORARY!!
-    platform_swap_buffers(); // Specific for the terminal based renderer/platform layer
-#endif
   }
   return NO_ERR;
 }
 
 i32 game_start(i32 argc, char** argv) {
-  zone_memory_init(ZONE_MEMORY, ZONE_TEMP_MEMORY);
+  zone_memory_init(g_zone_memory);
 
   Game* game = zone_malloc(sizeof(Game));
   game_state_init(game);

@@ -10,7 +10,7 @@ out vec4 out_color;
 
 uniform sampler2D tex;
 
-vec3 light = vec3(4, 0, 4);
+vec3 light = vec3(4, 1, 4);
 vec3 light_color = vec3(1, 1, 1);
 
 void main() {
