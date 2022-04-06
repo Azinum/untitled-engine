@@ -19,8 +19,3 @@
 #include "renderer.c"
 #include "camera.c"
 #include "platform.c"
-#include "entity.c"
-
-i32 engine_init() {
-  return NO_ERR;
-}

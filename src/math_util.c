@@ -95,6 +95,17 @@ inline f32 square_root(f32 a) {
 inline m4 m4_multiply(m4 a, m4 b) {
   m4 result = {0};
 
+#if USE_SSE
+  m4 left = transpose(a);
+  m4 right = transpose(b);
+
+  result.rows[0] = linear_combine(left.rows[0], right);
+  result.rows[1] = linear_combine(left.rows[1], right);
+  result.rows[2] = linear_combine(left.rows[2], right);
+  result.rows[3] = linear_combine(left.rows[3], right);
+
+  result = transpose(result);
+#else
   for (i32 col = 0; col < 4; ++col) {
     for (i32 row = 0; row < 4; ++row) {
       float sum = 0;
@@ -104,6 +115,7 @@ inline m4 m4_multiply(m4 a, m4 b) {
       result.e[col][row] = sum;
     }
   }
+#endif
   return result;
 }
 
@@ -183,3 +195,26 @@ inline m4 look_at(v3 eye, v3 center, v3 up) {
 
 	return result;
 }
+
+#if USE_SSE
+
+inline m4 transpose(m4 a) {
+  m4 result = a;
+
+  _MM_TRANSPOSE4_PS(result.rows[0], result.rows[1], result.rows[2], result.rows[3]);
+
+  return result;
+}
+
+inline __m128 linear_combine(__m128 left, m4 right) {
+  __m128 result;
+
+  result = _mm_mul_ps(_mm_shuffle_ps(left, left, 0x00), right.rows[0]);
+  result = _mm_add_ps(result, _mm_mul_ps(_mm_shuffle_ps(left, left, 0x55), right.rows[1]));
+  result = _mm_add_ps(result, _mm_mul_ps(_mm_shuffle_ps(left, left, 0xaa), right.rows[2]));
+  result = _mm_add_ps(result, _mm_mul_ps(_mm_shuffle_ps(left, left, 0xff), right.rows[3]));
+
+  return result;
+}
+
+#endif

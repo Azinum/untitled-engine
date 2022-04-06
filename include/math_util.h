@@ -78,4 +78,12 @@ extern m4 perspective(f32 fov, f32 aspect, f32 z_near, f32 z_far);
 
 extern m4 look_at(v3 eye, v3 center, v3 up);
 
+#if USE_SSE
+
+extern m4 transpose(m4 a);
+
+extern __m128 linear_combine(__m128 left, m4 right);
+
+#endif
+
 #endif
