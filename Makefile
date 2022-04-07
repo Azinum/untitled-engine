@@ -19,6 +19,10 @@ endif
 compile: prepare
 	${CC} ${SRC} ${FLAGS} ${LIBS} ${O_FLAG}
 
+debug: O_FLAG=${O_DEBUG}
+debug: compile
+	${DEBUG_PROG} ./${BUILD}/${PROG}
+
 pack:
 	./${BUILD}/${PROG} -p
 

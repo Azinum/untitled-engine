@@ -17,7 +17,7 @@ PROG=game
 
 BUILD=build
 
-SRC=src/main.c
+SRC=game/main.c
 
 INC=include
 
@@ -32,3 +32,5 @@ O_RELEASE=-O3 -ffast-math
 O_FLAG=${O_RELEASE}
 
 X11_INC=/usr/include/X11
+
+DEBUG_PROG=

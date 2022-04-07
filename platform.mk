@@ -49,6 +49,7 @@ ifeq (${PLATFORM}, LINUX)
 		LIBS+=-lGLEW -lGL -lGLU
 		FLAGS+=-D USE_OPENGL
 	endif
+	DEBUG_PROG=gdb
 endif
 
 ifeq (${PLATFORM}, WINDOWS)
@@ -68,4 +69,5 @@ ifeq (${PLATFORM}, DARWIN)
 		LIBS+=-lGLEW -framework OpenGL
 		FLAGS+=-D USE_OPENGL
 	endif
+	DEBUG_PROG=lldb
 endif

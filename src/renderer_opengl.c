@@ -533,7 +533,7 @@ i32 renderer_upload_texture(Image* source, Texture* texture) {
 i32 renderer_init() {
   opengl_init();
   init_state(&renderer);
-  init_quad_renderer(&renderer);
+  // init_quad_renderer(&renderer);
 
   view = m4d(1.0f);
   renderer_framebuffer_cb(platform_window_width(), platform_window_height());
@@ -543,7 +543,7 @@ i32 renderer_init() {
   shader_compile_from_source(diffuse_vert, diffuse_frag, diffuse_attribs, &diffuse_shader);
   shader_compile_from_source(diffuse2_vert, diffuse2_frag, diffuse2_attribs, &diffuse2_shader);
 
-  upload_quad_data(quad_vertices, sizeof(quad_vertices), quad_indices, sizeof(quad_indices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo, &quad_ibo);
+  // upload_quad_data(quad_vertices, sizeof(quad_vertices), quad_indices, sizeof(quad_indices), sizeof(float) * 4, 4, &quad_vao, &quad_vbo, &quad_ibo);
   return NO_ERR;
 }
 
