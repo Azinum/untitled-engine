@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
-#include <pthread.h>
+#include <string.h> // memset
 
 typedef float f32;
 typedef double f64;
@@ -29,6 +29,8 @@ enum Error_code {
 
 #define ARR_SIZE(ARR) ((sizeof(ARR)) / (sizeof(ARR[0])))
 #define MAX_PATH_SIZE 512
+
+#define HERE fprintf(stdout, "%s:%d: HERE\n", __FILE__, __LINE__)
 
 #define safe_scanf(ScanStatus, Iterator, Format, ...) { \
   i32 num_bytes_read = 0; \

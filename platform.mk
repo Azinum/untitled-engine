@@ -1,4 +1,4 @@
-# common.mk
+# platform.mk
 
 MACHINE=${strip ${shell ${CC} -dumpmachine}}
 ifndef PLATFORM

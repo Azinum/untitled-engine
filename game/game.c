@@ -65,6 +65,16 @@ i32 game_run(Game* game) {
   f64 now = 0;
   f64 last = 0;
 
+  Audio_source audio = {0};
+  Audio_source audio2 = {0};
+  i32 audio_id = -1;
+  i32 audio2_id = -1;
+  if (audio_load_from_pack("data/audio/blah.ogg", PACK_FILE, &audio) == NO_ERR) {
+    audio_id = audio_engine_push_audio_source(&audio);
+  }
+  if (audio_load_from_pack("data/audio/ah.ogg", PACK_FILE, &audio2) == NO_ERR) {
+    audio2_id = audio_engine_push_audio_source(&audio2);
+  }
   while (game->running && platform_handle_events() >= 0 && !platform_window_should_close()) {
     last = now;
     now = platform_get_time();
@@ -94,6 +104,12 @@ i32 game_run(Game* game) {
     }
     if (key_pressed[KEY_O]) {
       camera_set_projection_mode(ORTHOGONAL);
+    }
+    if (key_pressed[KEY_T]) {
+      audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 1.0f);
+    }
+    if (key_pressed[KEY_Y]) {
+      audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 1.0f);
     }
     if (key_pressed[KEY_A]) {
       camera.target = V3_OP(
@@ -171,6 +187,8 @@ i32 game_run(Game* game) {
     // renderer_draw();
     renderer_end_frame(30, 30, 30);
   }
+  audio_unload(&audio);
+  audio_unload(&audio2);
   return NO_ERR;
 }
 

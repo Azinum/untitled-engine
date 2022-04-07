@@ -5,7 +5,7 @@ $(shell cp default.mk config.mk)
 endif
 
 include config.mk
-include common.mk
+include platform.mk
 
 all: compile pack
 

@@ -16,6 +16,8 @@
 #include "bmp.h"
 #include "ppm.h"
 #include "mesh.h"
+#include "audio.h"
+#include "audio_vorbis.h"
 #include "audio_engine.h"
 #include "renderer.h"
 #include "camera.h"

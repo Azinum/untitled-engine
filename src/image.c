@@ -40,7 +40,7 @@ i32 image_load_from_buffer(const char* ext, Image* image, Buffer* buffer) {
     result = bmp_load(image, buffer);
   }
   else {
-    fprintf(stderr, "image_load_from_buffer: Image format '%s' not supported for file\n", ext);
+    fprintf(stderr, "image_load_from_buffer: Image format `%s` not supported for file\n", ext);
   }
   return result;
 }
@@ -62,7 +62,7 @@ i32 image_write(const char* path, Image* image) {
     result = ppm_write(path, image);
   }
   else {
-    fprintf(stderr, "image_write: Image format '%s' not supported for file\n", ext);
+    fprintf(stderr, "image_write: Image format `%s` not supported for file\n", ext);
   }
   return result;
 }
