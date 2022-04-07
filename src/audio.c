@@ -71,6 +71,13 @@ void audio_sum_f32_buffers(f32* out_buffer, f32* in_a, f32* in_b, u32 size) {
     *dest = _mm_add_ps(*a, *b);
   }
 #else
-  assert(!"audio_sum_f32_buffers non-SIMD not implemented yet");
+  f32* dest = out_buffer;
+  f32* a = in_a;
+  f32* b = in_b;
+  u32 chunk_size = sizeof(f32);
+  u32 max_chunk = size / chunk_size;
+  for (u32 chunk_index = 0; chunk_index < max_chunk; ++chunk_index, ++dest, ++a, ++b) {
+    *dest = *a + *b;
+  }
 #endif
 }
