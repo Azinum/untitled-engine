@@ -30,6 +30,7 @@ typedef struct Audio_engine {
   i32 frames_per_buffer;
   i32 channel_count;
   u8* out;
+  f32 gain;
 
   Audio_source audio_source[MAX_AUDIO_SOURCE];
   u32 audio_source_count;

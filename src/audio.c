@@ -81,3 +81,26 @@ void audio_sum_f32_buffers(f32* out_buffer, f32* in_a, f32* in_b, u32 size) {
   }
 #endif
 }
+
+void audio_mul_f32_buffers(f32* out_buffer, f32* in_a, f32 factor, u32 size) {
+#if USE_SSE
+  assert(!(size % sizeof(__m128)) && "size of buffers must be a multiple of 16");
+  __m128* dest = (__m128*)out_buffer;
+  __m128* a = (__m128*)in_a;
+  __m128 b = _mm_set1_ps(factor);
+  u32 chunk_size = sizeof(__m128);
+  u32 max_chunk = size / chunk_size;
+  for (u32 chunk_index = 0; chunk_index < max_chunk; ++chunk_index, ++dest, ++a) {
+    *dest = _mm_mul_ps(*a, b);
+  }
+#else
+  f32* dest = out_buffer;
+  f32* a = in_a;
+  u32 chunk_size = sizeof(f32);
+  u32 max_chunk = size / chunk_size;
+  for (u32 chunk_index = 0; chunk_index < max_chunk; ++chunk_index, ++dest, ++a) {
+    *dest = *a * factor;
+  }
+#endif
+
+}

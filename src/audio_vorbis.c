@@ -17,7 +17,11 @@ i32 audio_vorbis_load_from_buffer(const char* path, Buffer* data, Audio_source* 
   audio->sample_rate = sample_rate;
   audio->channel_count = channel_count;
   audio->buffer = zone_malloc(audio->sample_count * sizeof(f32));
-  assert(audio->buffer != NULL); // TODO(lucas): Handle
+  if (!audio->buffer) {
+    fprintf(stderr, "audio_vorbis_load_from_buffer: Failed to allocate memory for audio buffer\n");
+    free(buffer);
+    return ERR;
+  }
   audio_convert_to_f32_buffer(audio->buffer, buffer, audio->sample_count);
   free(buffer);
   return result;

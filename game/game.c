@@ -106,10 +106,10 @@ i32 game_run(Game* game) {
       camera_set_projection_mode(ORTHOGONAL);
     }
     if (key_pressed[KEY_T]) {
-      audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 1.0f);
+      audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 0.5f);
     }
     if (key_pressed[KEY_Y]) {
-      audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 1.0f);
+      audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 0.5f);
     }
     if (key_pressed[KEY_A]) {
       camera.target = V3_OP(

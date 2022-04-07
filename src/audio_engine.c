@@ -54,6 +54,7 @@ void process_bus(Bus* bus) {
       }
     }
   }
+  audio_mul_f32_buffers(bus->buffer, bus->buffer, bus->gain, sizeof(f32) * a->frames_per_buffer * bus->channel_count);
 }
 
 i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer, i32 channel_count) {
@@ -61,6 +62,7 @@ i32 audio_engine_state_init(i32 sample_rate, i32 frames_per_buffer, i32 channel_
   a->frames_per_buffer = frames_per_buffer;
   a->channel_count = channel_count;
   a->out = NULL;
+  a->gain = 1.0f;
 
   a->bus_buffer_memory = zone_malloc(MAX_BUS * sizeof(f32) * frames_per_buffer * channel_count);
   for (u32 i = 0; i < MAX_BUS; ++i) {
@@ -100,6 +102,7 @@ i32 audio_engine_process(void* out_buffer) {
     Bus* bus = &a->buses[i];
     audio_sum_f32_buffers(out, out, bus->buffer, sizeof(f32) * a->frames_per_buffer * bus->channel_count);
   }
+  audio_mul_f32_buffers(out, out, a->gain, sizeof(f32) * a->frames_per_buffer * a->channel_count);
   return NO_ERR;
 }
 
@@ -125,6 +128,7 @@ void audio_engine_play_audio_once(i32 audio_id, u32 bus_id, f32 gain) {
       .sample_index = 0,
       .reached_end = 0,
     };
+    bus->gain = gain;
     bus->audio_count++;
   }
 }

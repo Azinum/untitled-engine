@@ -22,4 +22,6 @@ void audio_zero_f32_buffer(f32* buffer, u32 size /* size in bytes */);
 
 void audio_sum_f32_buffers(f32* out_buffer, f32* in_a, f32* in_b, u32 size);
 
+void audio_mul_f32_buffers(f32* out_buffer, f32* in_a, f32 factor, u32 size);
+
 #endif // _AUDIO_H
