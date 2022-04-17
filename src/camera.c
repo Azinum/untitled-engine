@@ -10,9 +10,11 @@ void camera_init(v3 pos, Projection mode) {
   camera.right = V3(1, 0, 0);
   camera.forward = V3(0, 0, 1);
 
-  camera.pitch = -80;
-  camera.yaw = 90;
-  camera.roll = 0;
+  camera.rotation = camera.rotation_target = V3(
+    0, // pitch
+    90, // yaw
+    0 // roll
+  );
 
   camera.mode = mode;
 }
@@ -44,9 +46,9 @@ void camera_set_projection_mode(Projection mode) {
 
 void camera_update() {
   v3 dir = V3(
-    cos(radians(camera.yaw)) * cos(radians(camera.pitch)),
-    sin(radians(camera.pitch)),
-    sin(radians(camera.yaw)) * cos(radians(camera.pitch))
+    cos(radians(camera.rotation.yaw)) * cos(radians(camera.rotation.pitch)),
+    sin(radians(camera.rotation.pitch)),
+    sin(radians(camera.rotation.yaw)) * cos(radians(camera.rotation.pitch))
   );
 
   camera.forward = v3_normalize(dir);

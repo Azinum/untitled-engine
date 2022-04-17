@@ -15,9 +15,8 @@ typedef struct Camera {
   v3 right;
   v3 forward;
 
-  f32 pitch;
-  f32 yaw;
-  f32 roll;
+  v3 rotation;
+  v3 rotation_target;
 
   Projection mode;
 } Camera;

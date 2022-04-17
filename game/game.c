@@ -4,6 +4,8 @@
 
 #define MAX_TITLE_SIZE 128
 #define SEED 811
+#define CAMERA_LERP_SPEED 42.0f
+#define CAMERA_ROTATION_LERP_SPEED 42.0f
 
 static i32 game_state_init(Game* game);
 static i32 game_run(Game* game);
@@ -23,7 +25,7 @@ i32 game_state_init(Game* game) {
   game->dt = 0;
   game->total_time = 0;
 
-  camera_init(V3(3, 7, 3), PERSPECTIVE);
+  camera_init(V3(3, 1, 3), PERSPECTIVE);
 
   for (i32 y = 0; y < MAP_H; ++y) {
     for (i32 x = 0; x < MAP_W; ++x) {
@@ -84,7 +86,7 @@ i32 game_run(Game* game) {
       game->dt = g_dt_max;
     }
     ++game->tick;
-    if (!(game->tick % 16)) {
+    if (!(game->tick % 32)) {
       snprintf(title, MAX_TITLE_SIZE, "%s | fps: %i | dt: %g | draw calls: %u", g_game_title, (i32)(1.0f / game->dt), game->dt, renderer_num_draw_calls());
       platform_window_set_title(title);
     }
@@ -112,33 +114,17 @@ i32 game_run(Game* game) {
       audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 0.5f);
     }
     if (key_pressed[KEY_A]) {
-      camera.target = V3_OP(
-        V3(
-          1,
-          0,
-          0
-        ),
-        camera.target,
-        +
-      );
+      camera.rotation_target.yaw += -90;
     }
     if (key_pressed[KEY_D]) {
-      camera.target = V3_OP(
-        V3(
-          -1,
-          0,
-          0
-        ),
-        camera.target,
-        +
-      );
+      camera.rotation_target.yaw += 90;
     }
     if (key_pressed[KEY_W]) {
       camera.target = V3_OP(
         V3(
+          camera.forward.x,
           0,
-          0,
-          1
+          camera.forward.z
         ),
         camera.target,
         +
@@ -147,9 +133,9 @@ i32 game_run(Game* game) {
     if (key_pressed[KEY_S]) {
       camera.target = V3_OP(
         V3(
+          -camera.forward.x,
           0,
-          0,
-          -1
+          -camera.forward.z
         ),
         camera.target,
         +
@@ -162,9 +148,15 @@ i32 game_run(Game* game) {
       camera.target.y += 1;
     }
     camera.pos = V3(
-      lerp(camera.pos.x, camera.target.x, 50.0f * game->dt),
-      lerp(camera.pos.y, camera.target.y, 50.0f * game->dt),
-      lerp(camera.pos.z, camera.target.z, 50.0f * game->dt)
+      lerp(camera.pos.x, camera.target.x, CAMERA_LERP_SPEED * game->dt),
+      lerp(camera.pos.y, camera.target.y, CAMERA_LERP_SPEED * game->dt),
+      lerp(camera.pos.z, camera.target.z, CAMERA_LERP_SPEED * game->dt)
+    );
+
+    camera.rotation = V3(
+      lerp(camera.rotation.pitch, camera.rotation_target.pitch, CAMERA_ROTATION_LERP_SPEED * game->dt),
+      lerp(camera.rotation.yaw, camera.rotation_target.yaw, CAMERA_ROTATION_LERP_SPEED * game->dt),
+      lerp(camera.rotation.roll, camera.rotation_target.roll, CAMERA_ROTATION_LERP_SPEED * game->dt)
     );
 
     camera_update();

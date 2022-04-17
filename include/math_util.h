@@ -19,6 +19,9 @@ typedef union v3 {
   struct {
     f32 r, g, b;
   };
+  struct {
+    f32 pitch, yaw, roll;
+  };
 } v3;
 
 typedef union v2 {
