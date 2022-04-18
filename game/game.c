@@ -93,16 +93,11 @@ i32 game_run(Game* game) {
   f64 last = 0;
 
   Audio_source audio = {0};
-  Audio_source audio2 = {0};
   i32 audio_id = -1;
-  i32 audio2_id = -1;
-  if (audio_load_from_pack("data/audio/0x0.ogg", PACK_FILE, &audio) == NO_ERR) {
+  if (audio_load_from_pack("data/audio/track-01.ogg", PACK_FILE, &audio) == NO_ERR) {
     audio_id = audio_engine_push_audio_source(&audio);
   }
-  if (audio_load_from_pack("data/audio/0x1.ogg", PACK_FILE, &audio2) == NO_ERR) {
-    audio2_id = audio_engine_push_audio_source(&audio2);
-  }
-  audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 0.5f);
+  audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 0.2f);
   while (game->running && platform_handle_events() >= 0 && !platform_window_should_close()) {
     last = now;
     now = platform_get_time();
@@ -188,7 +183,6 @@ i32 game_run(Game* game) {
     renderer_end_frame(30, 30, 30);
   }
   audio_unload(&audio);
-  audio_unload(&audio2);
   return NO_ERR;
 }
 
