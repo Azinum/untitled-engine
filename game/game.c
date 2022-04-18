@@ -25,7 +25,7 @@ i32 game_state_init(Game* game) {
   game->dt = 0;
   game->total_time = 0;
 
-  camera_init(V3(3, 1, 3), PERSPECTIVE);
+  camera_init(V3(3, 0, 3), PERSPECTIVE);
 
   for (i32 y = 0; y < MAP_H; ++y) {
     for (i32 x = 0; x < MAP_W; ++x) {
@@ -71,12 +71,13 @@ i32 game_run(Game* game) {
   Audio_source audio2 = {0};
   i32 audio_id = -1;
   i32 audio2_id = -1;
-  if (audio_load_from_pack("data/audio/blah.ogg", PACK_FILE, &audio) == NO_ERR) {
+  if (audio_load_from_pack("data/audio/0x0.ogg", PACK_FILE, &audio) == NO_ERR) {
     audio_id = audio_engine_push_audio_source(&audio);
   }
-  if (audio_load_from_pack("data/audio/ah.ogg", PACK_FILE, &audio2) == NO_ERR) {
+  if (audio_load_from_pack("data/audio/0x1.ogg", PACK_FILE, &audio2) == NO_ERR) {
     audio2_id = audio_engine_push_audio_source(&audio2);
   }
+  audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 0.5f);
   while (game->running && platform_handle_events() >= 0 && !platform_window_should_close()) {
     last = now;
     now = platform_get_time();
@@ -106,12 +107,6 @@ i32 game_run(Game* game) {
     }
     if (key_pressed[KEY_O]) {
       camera_set_projection_mode(ORTHOGONAL);
-    }
-    if (key_pressed[KEY_T]) {
-      audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 0.5f);
-    }
-    if (key_pressed[KEY_Y]) {
-      audio_engine_play_audio_once(audio2_id, AUDIO_BUS_MASTER, 0.5f);
     }
     if (key_pressed[KEY_A]) {
       camera.rotation_target.yaw += -90;
@@ -173,6 +168,7 @@ i32 game_run(Game* game) {
           render_model(cube_id, &ground_texture, pos, V3(1, 1, 1));
         }
         render_model(cube_id, &ground_texture, V3(pos.x, pos.y - 1, pos.z), V3(1, 1, 1));
+        render_model(cube_id, &ground_texture, V3(pos.x, pos.y + 1, pos.z), V3(1, 1, 1));
       }
     }
     // renderer_push_quad(V3(0, 0, 0), V3(1, 1, 1), V2(0, 0), V2(1, 1));

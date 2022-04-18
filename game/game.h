@@ -5,7 +5,7 @@
 
 #include "entity.h"
 
-#define MAX_ENTITY 512
+#define MAX_ENTITY 1024
 
 typedef struct Game {
   u8 running;

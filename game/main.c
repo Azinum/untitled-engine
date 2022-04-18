@@ -29,7 +29,7 @@ i32 main(i32 argc, char** argv) {
   i32 result = parse_args(args, ARR_SIZE(args), argc, argv);
   if (result == NO_ERR) {
     if (game_args.pack) {
-      zone_memory_init(MB(10));
+      zone_memory_init(MB(512));
       pack_dir(game_args.pack_file, game_args.pack_path);
       zone_memory_free();
     }
