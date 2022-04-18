@@ -7,7 +7,7 @@ endif
 include config.mk
 include platform.mk
 
-all: compile pack
+all: compile
 
 prepare:
 ifneq (${PLATFORM}, WINDOWS)
