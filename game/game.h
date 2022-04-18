@@ -11,6 +11,7 @@ typedef struct Game {
   u8 running;
   Entity entities[MAX_ENTITY];
   u32 entity_count;
+  u32 entity_id;
 
   u64 tick;
   f64 dt;

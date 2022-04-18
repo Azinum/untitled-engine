@@ -1,8 +1,9 @@
 *.swo
 *.swp
+*.exe
+*.dSYM
 .DS_Store
 build/
 tmp/
 config.mk
 src/pack_file.c
-*.exe

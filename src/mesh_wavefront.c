@@ -53,7 +53,6 @@ i32 wavefront_prepare_mesh(Buffer* buffer, Mesh* mesh, const u8 sort) {
 
   mesh->normal = (void*)((u8*)mesh->uv_index + (sizeof(u32) * mesh->uv_index_count));
   mesh->normal_index = (void*)((u8*)mesh->normal + (sizeof(v3) * mesh->normal_count));
-
   return result;
 }
 
