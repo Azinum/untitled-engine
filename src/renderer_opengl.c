@@ -603,3 +603,6 @@ void renderer_free() {
   r->quad_data_size = 0;
   r->quad_index_count = 0;
 }
+
+#undef MAX_TEXTURE
+#undef MAX_MODEL

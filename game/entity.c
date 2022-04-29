@@ -4,13 +4,14 @@ void entity_init(Entity* e, v3 pos, v3 scale) {
   e->id = UINT32_MAX;
   e->pos = pos;
   e->scale = scale;
-  e->model_id = -1;
-  e->texture = (Texture) { .width = 0, .height = 0, .id = -1, };
+  e->mesh_id = -1;
+  e->texture_id = -1;
   e->type = ENTITY_NONE;
 }
 
 void entities_update_and_render(Game* game) {
   Entity* e = &game->entities[1];
+  Assets* assets = &game->assets;
   for (u32 i = 1; i < game->entity_count; ++i, ++e) {
     switch (e->type) {
       case ENTITY_BOBBER: {
@@ -20,7 +21,14 @@ void entities_update_and_render(Game* game) {
       default:
         break;
     }
-    render_model(e->model_id, &e->texture, e->pos, e->scale);
+    // TODO(lucas): add null texture and null mesh so there is no need to do these kinds of checks
+    if (e->mesh_id >= 0) {
+      i32 mesh = assets->mesh[e->mesh_id];
+      if (e->texture_id >= 0) {
+        Texture texture = assets->texture[e->texture_id];
+        render_model(mesh, &texture, e->pos, e->scale);
+      }
+    }
   }
 }
 

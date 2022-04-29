@@ -4,7 +4,7 @@ void render_texture(const Texture* texture, v3 position, v3 size) {
 
 }
 
-void render_model(i32 model_id, const Texture* texture, v3 position, v3 size) {
+void render_mesh(i32 model_id, const Texture* texture, v3 position, v3 size) {
 
 }
 

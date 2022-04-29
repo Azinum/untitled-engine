@@ -10,6 +10,8 @@
 #define CAMERA_ROTATION_LERP_SPEED 42.0f
 
 static i32 game_state_init(Game* game);
+static i32 game_load_assets(Game* game);
+static void game_unload_assets(Game* game);
 static i32 game_run(Game* game);
 
 #define MAP_W 16
@@ -31,73 +33,82 @@ i32 game_state_init(Game* game) {
 
   camera_init(V3(3, 0, 3), PERSPECTIVE);
 
-  return NO_ERR;
-}
-
-i32 game_run(Game* game) {
-  i32 cube_id = -1;
-  i32 sphere_id = -1;
-  Texture ground_texture;
-  Texture head_texture;
-
-{
-  Image source;
-  image_load_from_pack("data/texture/stone_ground.bmp", PACK_FILE, &source);
-  renderer_upload_texture(&source, &ground_texture);
-  image_unload(&source);
-}
-{
-  Image source;
-  image_load_from_pack("data/texture/head.bmp", PACK_FILE, &source);
-  renderer_upload_texture(&source, &head_texture);
-  image_unload(&source);
-}
-{
-  Mesh mesh;
-  mesh_load("data/mesh/cube.obj", &mesh);
-  cube_id = renderer_upload_mesh(&mesh);
-  mesh_unload(&mesh);
-}
-{
-  Mesh mesh;
-  mesh_load("data/mesh/sphere.obj", &mesh);
-  sphere_id = renderer_upload_mesh(&mesh);
-  mesh_unload(&mesh);
-}
 {
   Entity* head = entity_push(game, V3(6, 0, 4));
   head->type = ENTITY_BOBBER;
-  head->model_id = sphere_id;
-  head->texture = head_texture;
+  head->mesh_id = MESH_SPHERE;
+  head->texture_id = TEXTURE_HEAD;
 }
 {
   Entity* head = entity_push(game, V3(2, 0, 8));
   head->type = ENTITY_BOBBER;
-  head->model_id = sphere_id;
-  head->texture = head_texture;
+  head->mesh_id = MESH_SPHERE;
+  head->texture_id = TEXTURE_HEAD;
+}
+{
+  Entity* horror = entity_push(game, V3(2, 0, 6));
+  horror->type = ENTITY_BOBBER;
+  horror->mesh_id = MESH_HORROR;
+  horror->texture_id = TEXTURE_HORROR;
 }
   for (i32 y = 0; y < MAP_H; ++y) {
     for (i32 x = 0; x < MAP_W; ++x) {
       Entity* e = entity_push(game, V3(x, -1, y));
-      e->model_id = cube_id;
-      e->texture = ground_texture;
+      e->mesh_id = MESH_CUBE;
+      e->texture_id = TEXTURE_STONE_GROUND;
       if ((random_number() % 100) < 15) {
         Entity* e = entity_push(game, V3(x, 0, y));
-        e->model_id = cube_id;
-        e->texture = ground_texture;
+        e->mesh_id = MESH_CUBE;
+        e->texture_id = TEXTURE_STONE_GROUND;
       }
     }
   }
+
+  return NO_ERR;
+}
+
+i32 game_load_assets(Game* game) {
+  Assets* assets = &game->assets;
+  for (u32 i = 0; i < MAX_TEXTURE; ++i, ++assets->texture_count) {
+    Texture* t = &assets->texture[i];
+    Image source;
+    image_load_from_pack(texture_path[i], PACK_FILE, &source);
+    renderer_upload_texture(&source, t);
+    image_unload(&source);
+  }
+
+  for (u32 i = 0; i < MAX_MESH; ++i, ++assets->mesh_count) {
+    i32* mesh_id = &assets->mesh[i];
+    Mesh mesh;
+    mesh_load(mesh_path[i], &mesh);
+    *mesh_id = renderer_upload_mesh(&mesh);
+    mesh_unload(&mesh);
+  }
+  for (u32 i = 0; i < MAX_AUDIO; ++i, ++assets->audio_count) {
+    i32* audio_id = &assets->mesh[i];
+    Audio_source audio = {0};
+    if (audio_load_from_pack("data/audio/track-01.ogg", PACK_FILE, &audio) == NO_ERR) {
+      *audio_id = audio_engine_push_audio_source(&audio);
+    }
+  }
+  return NO_ERR;
+}
+
+void game_unload_assets(Game* game) {
+  Assets* assets = &game->assets;
+  assets->texture_count = 0;
+  assets->mesh_count = 0;
+  assets->audio_count = 0;
+}
+
+i32 game_run(Game* game) {
+  game_load_assets(game);
   char title[MAX_TITLE_SIZE] = {0};
   f64 now = 0;
   f64 last = 0;
 
-  Audio_source audio = {0};
-  i32 audio_id = -1;
-  if (audio_load_from_pack("data/audio/track-01.ogg", PACK_FILE, &audio) == NO_ERR) {
-    audio_id = audio_engine_push_audio_source(&audio);
-  }
-  audio_engine_play_audio_once(audio_id, AUDIO_BUS_MASTER, 0.2f);
+  // audio_engine_play_audio_once(game->assets.audio[AUDIO_TRACK_01], AUDIO_BUS_MASTER, 0.2f);
+
   while (game->running && platform_handle_events() >= 0 && !platform_window_should_close()) {
     last = now;
     now = platform_get_time();
@@ -182,7 +193,7 @@ i32 game_run(Game* game) {
 
     renderer_end_frame(30, 30, 30);
   }
-  audio_unload(&audio);
+  game_unload_assets(game);
   return NO_ERR;
 }
 

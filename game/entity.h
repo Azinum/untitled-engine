@@ -13,8 +13,8 @@ typedef struct Entity {
   v3 pos;
   v3 scale;
 
-  i32 model_id;
-  Texture texture;
+  i32 mesh_id;
+  i32 texture_id;
 
   Entity_type type;
 } Entity;

@@ -135,6 +135,11 @@ void audio_engine_play_audio_once(i32 audio_id, u32 bus_id, f32 gain) {
 
 void audio_engine_state_free() {
   zone_free(a->bus_buffer_memory);
+  for (u32 i = 0; i < a->audio_source_count; ++i) {
+    Audio_source* audio = &a->audio_source[i];
+    audio_unload(audio);
+  }
+  a->audio_source_count = 0;
 }
 
 void audio_engine_terminate() {
